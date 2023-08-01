@@ -1,0 +1,9 @@
+---
+name: coral
+description: Core C++ project utilities.
+
+
+version:
+  major: 0
+  minor: 1
+  patch: 0

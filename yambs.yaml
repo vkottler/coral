@@ -1,0 +1,11 @@
+# =====================================
+# generator=datazen
+# version=3.1.2
+# hash=e4490b537815992920bb60044f550592
+# =====================================
+---
+project:
+  name: coral
+
+  github: {owner: &self vkottler}
+  version: {major: 0, minor: 1, patch: 0}
