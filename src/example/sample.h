@@ -1,6 +1,7 @@
 #pragma once
 
-namespace Example {
+namespace Example
+{
 
 void method1(void);
 void method2(void);
