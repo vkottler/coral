@@ -2,6 +2,6 @@ vmklib
 yambs
 
 sphinx
-# sphinx_book_theme
+sphinx-book-theme
 breathe
 exhale
