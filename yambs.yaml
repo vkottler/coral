@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.2
-# hash=e4490b537815992920bb60044f550592
+# hash=0cb04c1528ff59b0a4918a6410c30060
 # =====================================
 ---
 project:
@@ -9,3 +9,10 @@ project:
 
   github: {owner: &self vkottler}
   version: {major: 0, minor: 1, patch: 0}
+
+variants:
+  clang:
+    suffix: &clang_version "-15"
+
+  clang-opt:
+    suffix: *clang_version
