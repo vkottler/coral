@@ -7,6 +7,7 @@
 #pragma once
 
 /* toolchain */
+#include <array>
 #include <cstdint>
 
 namespace Coral
@@ -31,7 +32,7 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      */
     bool push(const element_t &&elem, bool drop = false)
     {
-        static_cast<T *>(this)->push_impl(elem, drop);
+        return static_cast<T *>(this)->push_impl(elem, drop);
     }
 
     /**
@@ -42,6 +43,22 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
     void push_blocking(const element_t &&elem)
     {
         static_cast<T *>(this)->push_blocking_impl(elem);
+    }
+
+    /**
+     * Attempt to push an array into the buffer.
+     *
+     * \tparam    N          The size of \p elem_array.
+     * \param[in] elem_array The array to push data from.
+     * \param[in] drop       Whether or not to consider the array elements
+     *                       dropped if they can't all be pushed.
+     * \return               Whether or not the entire array was pushed. No
+     *                       elements are pushed otherwise.
+     */
+    template <std::size_t N>
+    bool push(const std::array<element_t, N> &&elem_array, bool drop = false)
+    {
+        return push_n(elem_array.data(), elem_array.size(), drop);
     }
 
     /**
@@ -59,7 +76,21 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
     bool push_n(const element_t *elem_array, std::size_t count,
                 bool drop = false)
     {
-        static_cast<T *>(this)->push_n_impl(elem_array, count, drop);
+        return static_cast<T *>(this)->push_n_impl(elem_array, count, drop);
+    }
+
+    /**
+     * Attempt to push an array into the buffer. Allows making partial
+     * progress.
+     *
+     * \tparam    N          The size of \p elem_array.
+     * \param[in] elem_array The array to push data from.
+     * \return               The number of elements pushed.
+     */
+    template <std::size_t N>
+    std::size_t try_push_n(const std::array<element_t, N> &&elem_array)
+    {
+        return try_push_n(elem_array.data(), elem_array.size());
     }
 
     /**
@@ -73,7 +104,19 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      */
     std::size_t try_push_n(const element_t *elem_array, std::size_t count)
     {
-        static_cast<T *>(this)->try_push_n_impl(elem_array, count);
+        return static_cast<T *>(this)->try_push_n_impl(elem_array, count);
+    }
+
+    /**
+     * Push an array into the buffer and block until it's added.
+     *
+     * \tparam    N          The size of \p elem_array.
+     * \param[in] elem_array The array to push.
+     */
+    template <std::size_t N>
+    void push_n_blocking(const std::array<element_t, N> &&elem_array)
+    {
+        push_n_blocking(elem_array.data(), elem_array.size());
     }
 
     /**
