@@ -20,7 +20,7 @@ namespace Coral
  * \tparam T         Implementing class (CRTP).
  * \tparam element_t The kind of element the buffer stores.
  */
-template <class T, typename element_t = uint8_t> class PcBufferWriter
+template <class T, typename element_t = std::byte> class PcBufferWriter
 {
   public:
     /**

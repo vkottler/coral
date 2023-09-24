@@ -20,7 +20,7 @@ namespace Coral
  * \tparam T         Same as \ref PcBufferWriter.
  * \tparam element_t Same as \ref PcBufferWriter.
  */
-template <class T, typename element_t = uint8_t> class PcBufferReader
+template <class T, typename element_t = std::byte> class PcBufferReader
 {
   public:
     /**
