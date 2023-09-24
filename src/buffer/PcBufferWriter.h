@@ -9,6 +9,7 @@
 /* toolchain */
 #include <array>
 #include <cstdint>
+#include <span>
 
 namespace Coral
 {
@@ -30,7 +31,7 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      *                 can't be added.
      * \return         Whether or not the element was added to the buffer.
      */
-    bool push(const element_t &&elem, bool drop = false)
+    inline bool push(const element_t &&elem, bool drop = false)
     {
         return static_cast<T *>(this)->push_impl(elem, drop);
     }
@@ -40,7 +41,7 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      *
      * \param[in] elem The element to add.
      */
-    void push_blocking(const element_t &&elem)
+    inline void push_blocking(const element_t &&elem)
     {
         static_cast<T *>(this)->push_blocking_impl(elem);
     }
@@ -56,9 +57,24 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      *                       elements are pushed otherwise.
      */
     template <std::size_t N>
-    bool push(const std::array<element_t, N> &&elem_array, bool drop = false)
+    inline bool push(const std::array<element_t, N> &&elem_array,
+                     bool drop = false)
     {
         return push_n(elem_array.data(), elem_array.size(), drop);
+    }
+
+    /**
+     * Attempt to push a span into the buffer.
+     *
+     * \param[in] elem_span The span to push data from.
+     * \param[in] drop      Whether or not to consider the span elements
+     *                      dropped if they can't all be pushed.
+     * \return              Whether or not the entire span was pushed. No
+     *                      elements are pushed otherwise.
+     */
+    inline bool push(const std::span<element_t> &&elem_span, bool drop = false)
+    {
+        return push_n(elem_span.data(), elem_span.size(), drop);
     }
 
     /**
@@ -73,8 +89,8 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      *                       method only adds either \p count elements or none
      *                       of them.
      */
-    bool push_n(const element_t *elem_array, std::size_t count,
-                bool drop = false)
+    inline bool push_n(const element_t *elem_array, std::size_t count,
+                       bool drop = false)
     {
         return static_cast<T *>(this)->push_n_impl(elem_array, count, drop);
     }
@@ -88,9 +104,21 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      * \return               The number of elements pushed.
      */
     template <std::size_t N>
-    std::size_t try_push_n(const std::array<element_t, N> &&elem_array)
+    inline std::size_t try_push_n(const std::array<element_t, N> &&elem_array)
     {
         return try_push_n(elem_array.data(), elem_array.size());
+    }
+
+    /**
+     * Attempt to push a span into the buffer. Allows making partial
+     * progress.
+     *
+     * \param[in] elem_span The span to push data from.
+     * \return              The number of elements pushed.
+     */
+    inline std::size_t try_push_n(const std::span<element_t> &&elem_span)
+    {
+        return try_push_n(elem_span.data(), elem_span.size());
     }
 
     /**
@@ -102,7 +130,8 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      * \return               The number of elements successfully added to the
      *                       buffer.
      */
-    std::size_t try_push_n(const element_t *elem_array, std::size_t count)
+    inline std::size_t try_push_n(const element_t *elem_array,
+                                  std::size_t count)
     {
         return static_cast<T *>(this)->try_push_n_impl(elem_array, count);
     }
@@ -114,9 +143,19 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      * \param[in] elem_array The array to push.
      */
     template <std::size_t N>
-    void push_n_blocking(const std::array<element_t, N> &&elem_array)
+    inline void push_n_blocking(const std::array<element_t, N> &&elem_array)
     {
         push_n_blocking(elem_array.data(), elem_array.size());
+    }
+
+    /**
+     * Push a span into the buffer and block until it's added.
+     *
+     * \param[in] elem_array The span to push.
+     */
+    inline void push_n_blocking(const std::span<element_t> &&elem_span)
+    {
+        push_n_blocking(elem_span.data(), elem_span.size());
     }
 
     /**
@@ -125,7 +164,7 @@ template <class T, typename element_t = uint8_t> class PcBufferWriter
      * \param[in] elem_array Same as \ref push_n.
      * \param[in] count      Same as \ref push_n.
      */
-    void push_n_blocking(const element_t *elem_array, std::size_t count)
+    inline void push_n_blocking(const element_t *elem_array, std::size_t count)
     {
         static_cast<T *>(this)->push_n_blocking_impl(elem_array, count);
     }
