@@ -11,6 +11,9 @@
 #include <cstdint>
 #include <cstring>
 
+/* internal */
+#include "../generated/structs/BufferState.h"
+
 namespace Coral
 {
 
@@ -20,25 +23,21 @@ class CircularBuffer
     static_assert(depth > 0);
 
   public:
-    using metrics_t = uint32_t;
-
-    CircularBuffer()
-        : buffer(), write_cursor(0), read_cursor(0), read_count(0),
-          write_count(0)
+    CircularBuffer() : buffer(), state()
     {
     }
 
     inline std::size_t write_index(void)
     {
-        return write_cursor % depth;
+        return state.write_cursor % depth;
     }
 
     inline void write_single(const element_t elem)
     {
         buffer[write_index()] = elem;
-        write_cursor++;
+        state.write_cursor++;
 
-        write_count++;
+        state.write_count++;
     }
 
     inline void write_n(const element_t *elem_array, std::size_t count)
@@ -62,24 +61,24 @@ class CircularBuffer
                         to_write * sizeof(element_t));
 
             count -= to_write;
-            write_cursor += to_write;
+            state.write_cursor += to_write;
             elem_array += to_write;
 
-            write_count += to_write;
+            state.write_count += to_write;
         }
     }
 
     inline std::size_t read_index(void)
     {
-        return read_cursor % depth;
+        return state.read_cursor % depth;
     }
 
     inline void read_single(element_t &elem)
     {
         elem = buffer[read_index()];
-        read_cursor++;
+        state.read_cursor++;
 
-        read_count++;
+        state.read_count++;
     }
 
     inline void read_n(element_t *elem_array, std::size_t count)
@@ -107,31 +106,28 @@ class CircularBuffer
             }
 
             count -= to_read;
-            read_cursor += to_read;
+            state.read_cursor += to_read;
 
-            read_count += to_read;
+            state.read_count += to_read;
         }
     }
 
-    void poll_metrics(metrics_t &_read_count, metrics_t &_write_count,
+    void poll_metrics(uint32_t &_read_count, uint32_t &_write_count,
                       bool reset = true)
     {
-        _read_count = read_count;
-        _write_count = write_count;
+        _read_count = state.read_count;
+        _write_count = state.write_count;
         if (reset)
         {
-            read_count = 0;
-            write_count = 0;
+            state.read_count = 0;
+            state.write_count = 0;
         }
     }
 
   protected:
     std::array<element_t, depth> buffer;
-    std::size_t write_cursor;
-    std::size_t read_cursor;
 
-    metrics_t read_count;
-    metrics_t write_count;
+    BufferState state;
 };
 
 }; // namespace Coral

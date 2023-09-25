@@ -31,7 +31,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *                 can't be added.
      * \return         Whether or not the element was added to the buffer.
      */
-    inline bool push(const element_t &&elem, bool drop = false)
+    inline bool push(const element_t &elem, bool drop = false)
     {
         return static_cast<T *>(this)->push_impl(elem, drop);
     }
@@ -41,7 +41,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *
      * \param[in] elem The element to add.
      */
-    inline void push_blocking(const element_t &&elem)
+    inline void push_blocking(const element_t &elem)
     {
         static_cast<T *>(this)->push_blocking_impl(elem);
     }
@@ -57,7 +57,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *                       elements are pushed otherwise.
      */
     template <std::size_t N>
-    inline bool push(const std::array<element_t, N> &&elem_array,
+    inline bool push(const std::array<element_t, N> &elem_array,
                      bool drop = false)
     {
         return push_n(elem_array.data(), elem_array.size(), drop);
@@ -72,7 +72,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      * \return              Whether or not the entire span was pushed. No
      *                      elements are pushed otherwise.
      */
-    inline bool push(const std::span<element_t> &&elem_span, bool drop = false)
+    inline bool push(const std::span<element_t> &elem_span, bool drop = false)
     {
         return push_n(elem_span.data(), elem_span.size(), drop);
     }
@@ -104,7 +104,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      * \return               The number of elements pushed.
      */
     template <std::size_t N>
-    inline std::size_t try_push_n(const std::array<element_t, N> &&elem_array)
+    inline std::size_t try_push_n(const std::array<element_t, N> &elem_array)
     {
         return try_push_n(elem_array.data(), elem_array.size());
     }
@@ -116,7 +116,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      * \param[in] elem_span The span to push data from.
      * \return              The number of elements pushed.
      */
-    inline std::size_t try_push_n(const std::span<element_t> &&elem_span)
+    inline std::size_t try_push_n(const std::span<element_t> &elem_span)
     {
         return try_push_n(elem_span.data(), elem_span.size());
     }
@@ -143,7 +143,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      * \param[in] elem_array The array to push.
      */
     template <std::size_t N>
-    inline void push_n_blocking(const std::array<element_t, N> &&elem_array)
+    inline void push_n_blocking(const std::array<element_t, N> &elem_array)
     {
         push_n_blocking(elem_array.data(), elem_array.size());
     }
@@ -153,7 +153,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *
      * \param[in] elem_array The span to push.
      */
-    inline void push_n_blocking(const std::span<element_t> &&elem_span)
+    inline void push_n_blocking(const std::span<element_t> &elem_span)
     {
         push_n_blocking(elem_span.data(), elem_span.size());
     }

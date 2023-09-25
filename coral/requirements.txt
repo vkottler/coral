@@ -1,5 +1,6 @@
 vmklib
 yambs
+ifgen
 
 sphinx
 sphinx-book-theme
