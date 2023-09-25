@@ -1,6 +1,6 @@
 vmklib
-yambs
-ifgen
+yambs>=2.5.2
+ifgen>=2.0.2
 
 sphinx
 sphinx-book-theme
