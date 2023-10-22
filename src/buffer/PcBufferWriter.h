@@ -1,5 +1,5 @@
 /**
- * \file PcBufferWriter.h
+ * \file
  *
  * \brief An interface definition for the writing-end of a producer-consumer
  *        buffer.

@@ -1,5 +1,5 @@
 /**
- * \file PcBufferReader.h
+ * \file
  *
  * \brief An interface definition for the reading-end of a producer-consumer
  *        buffer.
