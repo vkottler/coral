@@ -153,7 +153,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         assert(push(elem));
     }
 
-    void flush(void)
+    inline void flush(void)
     {
         while (!empty())
         {
@@ -186,7 +186,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
         if (count)
         {
-            assert(push_n(elem_array, count));
+            assert(push_n_impl(elem_array, count));
         }
 
         return count;
@@ -204,7 +204,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
                 service_data(true);
             }
 
-            assert(push_n(elem_array, chunk));
+            assert(push_n_impl(elem_array, chunk));
             elem_array += chunk;
             count -= chunk;
         }
@@ -244,5 +244,26 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         }
     }
 };
+
+template <std::size_t depth, typename element_t = std::byte>
+inline std::basic_istream<element_t> &operator>>(
+    std::basic_istream<element_t> &stream,
+    PcBuffer<depth, element_t> &instance)
+{
+    std::array<element_t, depth> elem_array;
+    instance.push_n_blocking(elem_array.data(),
+                             stream.readsome(elem_array.data(), depth));
+    return stream;
+}
+
+template <std::size_t depth, typename element_t = std::byte>
+inline std::basic_ostream<element_t> &operator<<(
+    std::basic_ostream<element_t> &stream,
+    PcBuffer<depth, element_t> &instance)
+{
+    std::array<element_t, depth> elem_array;
+    stream.write(elem_array.data(), instance.try_pop_n(elem_array));
+    return stream;
+}
 
 }; // namespace Coral

@@ -1,13 +1,15 @@
 /* toolchain */
 #include <cassert>
+#include <iostream>
 #include <limits>
+#include <sstream>
 #include <stdio.h>
 
 /* internal */
 #include "../../buffer/PcBuffer.h"
 
 static constexpr std::size_t depth = 1024;
-using element_t = uint8_t;
+using element_t = char;
 
 using namespace Coral;
 
@@ -37,7 +39,8 @@ void test_basic(Buffer &buf)
     for (std::size_t i = 0; i < depth; i++)
     {
         assert(buf.pop(val));
-        assert(val == (i % (std::numeric_limits<element_t>::max() + 1)));
+        assert(static_cast<uint8_t>(val) ==
+               (i % (std::numeric_limits<uint8_t>::max() + 1)));
     }
 
     /* Should not be able to read any more data. */
@@ -89,6 +92,21 @@ void test_drop_data(Buffer &buf)
     buf.pop_all();
 }
 
+void test_stream_interfaces(Buffer &buf)
+{
+    /* Ensure the buffer is empty. */
+    buf.pop_all();
+
+    const char *data = "Hello, world! (out)\n";
+    assert(buf.push_n(data, strlen(data)));
+
+    std::cout << buf;
+
+    /* Read input from a string stream. */
+    std::stringstream("Hello, world! (in)\n") >> buf;
+    std::cout << buf;
+}
+
 int main(void)
 {
     Buffer buf(
@@ -101,6 +119,8 @@ int main(void)
 
     Buffer buf2;
     test_drop_data(buf2);
+
+    test_stream_interfaces(buf2);
 
     return 0;
 }
