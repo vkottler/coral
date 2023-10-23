@@ -34,7 +34,7 @@ class StringCommandProcessor
         reset();
     }
 
-    void set_handler(Handler _handler)
+    void set_handler(Handler _handler = nullptr)
     {
         handler = _handler;
     }
@@ -80,6 +80,16 @@ class StringCommandProcessor
         return num_lines;
     }
 
+    inline void process(std::basic_string<element_t> &&line)
+    {
+        process(line.data(), line.size());
+    }
+
+    inline void process(std::basic_string<element_t> &line)
+    {
+        process(line.data(), line.size());
+    }
+
     void process(element_t *line, std::size_t length)
     {
         num_args = 0;
@@ -113,7 +123,7 @@ class StringCommandProcessor
         }
 
         /* Handle the command. */
-        if (handler)
+        if (handler and num_args)
         {
             handler(args, num_args);
         }

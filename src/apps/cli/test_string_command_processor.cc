@@ -56,5 +56,9 @@ int main(void)
     std::stringstream("\n\na    b    c   \n\n") >> buffer;
     assert(proc.poll() == 1);
 
+    proc.process("  a   b   c  ");
+    std::string test = "a b c";
+    proc.process(test);
+
     return 0;
 }
