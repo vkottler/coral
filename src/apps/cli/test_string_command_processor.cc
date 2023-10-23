@@ -11,26 +11,28 @@ static constexpr std::size_t depth = 1024;
 using Buffer = CharBuffer<depth>;
 using Processor = StringCommandProcessor<depth>;
 
+bool processed = false;
+
+void command_handler(const char **argc, std::size_t argv)
+{
+    assert(argv == 3);
+
+    std::cout << "'" << argc[0] << "'" << std::endl;
+    assert(strcmp(argc[0], "a") == 0);
+
+    std::cout << "'" << argc[1] << "'" << std::endl;
+    assert(strcmp(argc[1], "b") == 0);
+
+    std::cout << "'" << argc[2] << "'" << std::endl;
+    assert(strcmp(argc[2], "c") == 0);
+
+    processed = true;
+}
+
 int main(void)
 {
     Buffer buffer;
-
-    bool processed = false;
-
-    Processor proc(buffer, [&processed](const char **argc, std::size_t argv) {
-        assert(argv == 3);
-
-        std::cout << "'" << argc[0] << "'" << std::endl;
-        assert(strcmp(argc[0], "a") == 0);
-
-        std::cout << "'" << argc[1] << "'" << std::endl;
-        assert(strcmp(argc[1], "b") == 0);
-
-        std::cout << "'" << argc[2] << "'" << std::endl;
-        assert(strcmp(argc[2], "c") == 0);
-
-        processed = true;
-    });
+    Processor proc(buffer, command_handler);
 
     assert(proc.poll() == 0);
 
@@ -59,6 +61,14 @@ int main(void)
     proc.process("  a   b   c  ");
     std::string test = "a b c";
     proc.process(test);
+
+    /* Test automatic polling. */
+    processed = false;
+    Processor new_proc =
+        Processor(buffer, command_handler, true /* auto_poll */);
+    std::stringstream("a b c\n") >> buffer;
+    assert(proc.poll() == 0);
+    assert(processed);
 
     return 0;
 }

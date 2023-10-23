@@ -12,12 +12,13 @@ namespace Coral
 
 static constexpr std::size_t default_max_args = 32;
 
-template <std::size_t depth, std::size_t max_args = default_max_args,
-          typename element_t = char>
+template <std::size_t depth, typename element_t = char,
+          std::size_t max_args = default_max_args>
 class StringCommandProcessor
 {
   public:
     using Buffer = PcBuffer<depth, element_t>;
+    using String = std::basic_string<element_t>;
 
     using Handler = std::function<void(const element_t **, std::size_t)>;
 
@@ -26,12 +27,27 @@ class StringCommandProcessor
     static constexpr element_t default_word_delim = ' ';
 
     StringCommandProcessor(Buffer &_input, Handler _handler = nullptr,
+                           bool auto_poll = false,
                            element_t _line_delim = default_line_delim,
                            element_t _word_delim = default_word_delim)
         : input(_input), handler(_handler), line_delim(_line_delim),
           word_delim(_word_delim)
     {
         reset();
+
+        if (auto_poll)
+        {
+            set_auto_poll();
+        }
+    }
+
+    void set_auto_poll()
+    {
+        /* Poll the buffer whenever there's data. */
+        input.set_data_available([this](Buffer *buf) {
+            (void)buf;
+            poll();
+        });
     }
 
     void set_handler(Handler _handler = nullptr)
@@ -80,12 +96,12 @@ class StringCommandProcessor
         return num_lines;
     }
 
-    inline void process(std::basic_string<element_t> &&line)
+    inline void process(String &&line)
     {
         process(line.data(), line.size());
     }
 
-    inline void process(std::basic_string<element_t> &line)
+    inline void process(String &line)
     {
         process(line.data(), line.size());
     }
@@ -123,7 +139,7 @@ class StringCommandProcessor
         }
 
         /* Handle the command. */
-        if (handler and num_args)
+        if (handler)
         {
             handler(args, num_args);
         }
