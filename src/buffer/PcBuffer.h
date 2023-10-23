@@ -1,6 +1,5 @@
 /**
- * \file PcBuffer.h
- *
+ * \file
  * \brief A producer-consumer buffer implementation.
  */
 #pragma once
@@ -24,7 +23,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
   public:
     using ServiceCallback = std::function<void(PcBuffer<depth, element_t> *)>;
 
-    PcBuffer(bool _auto_service = true,
+    PcBuffer(bool _auto_service = false,
              ServiceCallback _space_available = nullptr,
              ServiceCallback _data_available = nullptr)
         : state(depth), buffer(), space_available(_space_available),
@@ -32,17 +31,19 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
     {
     }
 
-    void set_space_available(ServiceCallback _space_available)
+    void set_space_available(ServiceCallback _space_available = nullptr)
     {
         /* Don't allow double assignment. */
-        assert(_space_available and space_available == nullptr);
+        assert(not _space_available or
+               (_space_available and space_available == nullptr));
         space_available = _space_available;
     }
 
-    void set_data_available(ServiceCallback _data_available)
+    void set_data_available(ServiceCallback _data_available = nullptr)
     {
         /* Don't allow double assignment. */
-        assert(_data_available and data_available == nullptr);
+        assert(not _data_available or
+               (_data_available and data_available == nullptr));
         data_available = _data_available;
     }
 
@@ -150,7 +151,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
             service_data(true);
         }
 
-        assert(push(elem));
+        assert(push_impl(elem));
     }
 
     inline void flush(void)
@@ -244,6 +245,15 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         }
     }
 };
+
+/* Convenient aliases. */
+template <std::size_t depth> using ByteBuffer = PcBuffer<depth>;
+template <std::size_t depth> using CharBuffer = PcBuffer<depth, char>;
+template <std::size_t depth> using WcharBuffer = PcBuffer<depth, wchar_t>;
+
+/*
+ * Stream interfaces.
+ */
 
 template <std::size_t depth, typename element_t = std::byte>
 inline std::basic_istream<element_t> &operator>>(

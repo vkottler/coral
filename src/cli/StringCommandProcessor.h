@@ -1,0 +1,137 @@
+/**
+ * \file
+ * \brief A command processor implementation for strings.
+ */
+#pragma once
+
+/* internal */
+#include "../buffer/PcBuffer.h"
+
+namespace Coral
+{
+
+static constexpr std::size_t default_max_args = 32;
+
+template <std::size_t depth, std::size_t max_args = default_max_args,
+          typename element_t = char>
+class StringCommandProcessor
+{
+  public:
+    using Buffer = PcBuffer<depth, element_t>;
+
+    using Handler = std::function<void(const element_t **, std::size_t)>;
+
+    static constexpr element_t null = '\0';
+    static constexpr element_t default_line_delim = '\n';
+    static constexpr element_t default_word_delim = ' ';
+
+    StringCommandProcessor(Buffer &_input, Handler _handler = nullptr,
+                           element_t _line_delim = default_line_delim,
+                           element_t _word_delim = default_word_delim)
+        : input(_input), handler(_handler), line_delim(_line_delim),
+          word_delim(_word_delim)
+    {
+        reset();
+    }
+
+    void set_handler(Handler _handler)
+    {
+        handler = _handler;
+    }
+
+    void reset()
+    {
+        std::memset(line, 0, depth);
+        index = 0;
+    }
+
+    std::size_t poll()
+    {
+        std::size_t num_lines = 0;
+
+        while (not input.empty())
+        {
+            assert(input.pop_n(&line[index], 1));
+
+            if (line[index] != line_delim)
+            {
+                index++;
+
+                /*
+                 * Drop the current buffer if it becomes full before we see
+                 * the delimeter.
+                 */
+                if (index >= depth - 1)
+                {
+                    reset();
+                }
+            }
+
+            /* Only take action if we have some input. */
+            else if (index)
+            {
+                line[index] = null;
+                process(line, index);
+                reset();
+                num_lines++;
+            }
+        }
+
+        return num_lines;
+    }
+
+    void process(element_t *line, std::size_t length)
+    {
+        num_args = 0;
+        std::size_t token_start = 0;
+        std::size_t token_len = 0;
+
+        for (std::size_t i = 0; i < length; i++)
+        {
+            if (line[i] == word_delim)
+            {
+                line[i] = null;
+
+                if (token_len)
+                {
+                    args[num_args++] = &line[token_start];
+                    token_len = 0;
+                }
+
+                token_start = i + 1;
+            }
+            else
+            {
+                token_len++;
+            }
+        }
+
+        if (token_len)
+        {
+            args[num_args] = &line[token_start];
+            num_args++;
+        }
+
+        /* Handle the command. */
+        if (handler)
+        {
+            handler(args, num_args);
+        }
+    }
+
+  protected:
+    Buffer &input;
+    Handler handler;
+
+    /* Line parsing. */
+    element_t line_delim;
+    element_t line[depth];
+    std::size_t index;
+
+    /* Word parsing. */
+    element_t word_delim;
+    const element_t *args[max_args];
+    std::size_t num_args;
+};
+
+} // namespace Coral

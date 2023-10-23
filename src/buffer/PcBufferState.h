@@ -1,6 +1,5 @@
 /**
- * \file PcBufferState.h
- *
+ * \file
  * \brief A class for helping compute producer-consumer buffer state.
  */
 #pragma once

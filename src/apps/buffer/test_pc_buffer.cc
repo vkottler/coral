@@ -84,6 +84,7 @@ void test_drop_data(Buffer &buf)
     {
         val++;
     }
+    assert(buf.full());
 
     assert(buf.state.write_dropped == 0);
     buf.push(val, true);
@@ -117,10 +118,34 @@ int main(void)
     test_basic(buf);
     test_n_push_pop(buf);
 
-    Buffer buf2;
+    Buffer buf2 = {};
     test_drop_data(buf2);
 
     test_stream_interfaces(buf2);
+
+    char data = 'x';
+    for (std::size_t i = 0; i < depth; i++)
+    {
+        buf2.push_blocking(data);
+    }
+    assert(buf2.full());
+
+    /* Ensure that blocking write works. */
+    buf2.set_data_available([](Buffer *buf) { buf->pop_all(); });
+    buf2.push_blocking(data);
+
+    buf2.set_data_available();
+
+    for (std::size_t i = 0; i < depth; i++)
+    {
+        buf2.push_blocking(data);
+    }
+    assert(buf2.full());
+
+    /* Ensure that blocking write works. */
+    buf2.set_data_available([](Buffer *buf) { buf->pop_all(); });
+    std::array<element_t, depth * 10> data_array = {};
+    buf2.push_n_blocking(data_array);
 
     return 0;
 }
