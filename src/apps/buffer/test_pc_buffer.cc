@@ -1,13 +1,15 @@
 /* toolchain */
 #include <cassert>
+#include <iostream>
 #include <limits>
+#include <sstream>
 #include <stdio.h>
 
 /* internal */
 #include "../../buffer/PcBuffer.h"
 
 static constexpr std::size_t depth = 1024;
-using element_t = uint8_t;
+using element_t = char;
 
 using namespace Coral;
 
@@ -37,7 +39,8 @@ void test_basic(Buffer &buf)
     for (std::size_t i = 0; i < depth; i++)
     {
         assert(buf.pop(val));
-        assert(val == (i % (std::numeric_limits<element_t>::max() + 1)));
+        assert(static_cast<uint8_t>(val) ==
+               (i % (std::numeric_limits<uint8_t>::max() + 1)));
     }
 
     /* Should not be able to read any more data. */
@@ -81,12 +84,28 @@ void test_drop_data(Buffer &buf)
     {
         val++;
     }
+    assert(buf.full());
 
     assert(buf.state.write_dropped == 0);
     buf.push(val, true);
     assert(buf.state.write_dropped == 1);
 
     buf.pop_all();
+}
+
+void test_stream_interfaces(Buffer &buf)
+{
+    /* Ensure the buffer is empty. */
+    buf.pop_all();
+
+    const char *data = "Hello, world! (out)\n";
+    assert(buf.push_n(data, strlen(data)));
+
+    std::cout << buf;
+
+    /* Read input from a string stream. */
+    std::stringstream("Hello, world! (in)\n") >> buf;
+    std::cout << buf;
 }
 
 int main(void)
@@ -99,8 +118,34 @@ int main(void)
     test_basic(buf);
     test_n_push_pop(buf);
 
-    Buffer buf2;
+    Buffer buf2 = {};
     test_drop_data(buf2);
+
+    test_stream_interfaces(buf2);
+
+    char data = 'x';
+    for (std::size_t i = 0; i < depth; i++)
+    {
+        buf2.push_blocking(data);
+    }
+    assert(buf2.full());
+
+    /* Ensure that blocking write works. */
+    buf2.set_data_available([](Buffer *buf) { buf->pop_all(); });
+    buf2.push_blocking(data);
+
+    buf2.set_data_available();
+
+    for (std::size_t i = 0; i < depth; i++)
+    {
+        buf2.push_blocking(data);
+    }
+    assert(buf2.full());
+
+    /* Ensure that blocking write works. */
+    buf2.set_data_available([](Buffer *buf) { buf->pop_all(); });
+    std::array<element_t, depth * 10> data_array = {};
+    buf2.push_n_blocking(data_array);
 
     return 0;
 }

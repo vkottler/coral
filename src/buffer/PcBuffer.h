@@ -1,6 +1,5 @@
 /**
- * \file PcBuffer.h
- *
+ * \file
  * \brief A producer-consumer buffer implementation.
  */
 #pragma once
@@ -24,7 +23,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
   public:
     using ServiceCallback = std::function<void(PcBuffer<depth, element_t> *)>;
 
-    PcBuffer(bool _auto_service = true,
+    PcBuffer(bool _auto_service = false,
              ServiceCallback _space_available = nullptr,
              ServiceCallback _data_available = nullptr)
         : state(depth), buffer(), space_available(_space_available),
@@ -32,17 +31,19 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
     {
     }
 
-    void set_space_available(ServiceCallback _space_available)
+    void set_space_available(ServiceCallback _space_available = nullptr)
     {
         /* Don't allow double assignment. */
-        assert(_space_available and space_available == nullptr);
+        assert(not _space_available or
+               (_space_available and space_available == nullptr));
         space_available = _space_available;
     }
 
-    void set_data_available(ServiceCallback _data_available)
+    void set_data_available(ServiceCallback _data_available = nullptr)
     {
         /* Don't allow double assignment. */
-        assert(_data_available and data_available == nullptr);
+        assert(not _data_available or
+               (_data_available and data_available == nullptr));
         data_available = _data_available;
     }
 
@@ -150,10 +151,10 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
             service_data(true);
         }
 
-        assert(push(elem));
+        assert(push_impl(elem));
     }
 
-    void flush(void)
+    inline void flush(void)
     {
         while (!empty())
         {
@@ -186,7 +187,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
         if (count)
         {
-            assert(push_n(elem_array, count));
+            assert(push_n_impl(elem_array, count));
         }
 
         return count;
@@ -204,7 +205,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
                 service_data(true);
             }
 
-            assert(push_n(elem_array, chunk));
+            assert(push_n_impl(elem_array, chunk));
             elem_array += chunk;
             count -= chunk;
         }
@@ -244,5 +245,35 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         }
     }
 };
+
+/* Convenient aliases. */
+template <std::size_t depth> using ByteBuffer = PcBuffer<depth>;
+template <std::size_t depth> using CharBuffer = PcBuffer<depth, char>;
+template <std::size_t depth> using WcharBuffer = PcBuffer<depth, wchar_t>;
+
+/*
+ * Stream interfaces.
+ */
+
+template <std::size_t depth, typename element_t = std::byte>
+inline std::basic_istream<element_t> &operator>>(
+    std::basic_istream<element_t> &stream,
+    PcBuffer<depth, element_t> &instance)
+{
+    std::array<element_t, depth> elem_array;
+    instance.push_n_blocking(elem_array.data(),
+                             stream.readsome(elem_array.data(), depth));
+    return stream;
+}
+
+template <std::size_t depth, typename element_t = std::byte>
+inline std::basic_ostream<element_t> &operator<<(
+    std::basic_ostream<element_t> &stream,
+    PcBuffer<depth, element_t> &instance)
+{
+    std::array<element_t, depth> elem_array;
+    stream.write(elem_array.data(), instance.try_pop_n(elem_array));
+    return stream;
+}
 
 }; // namespace Coral

@@ -1,23 +1,25 @@
 # =====================================
 # generator=datazen
-# version=3.1.3
-# hash=989e6deb3e06ca8b5b94f1f12edc7378
+# version=3.1.2
+# hash=5d5bf834332932b3dbbc1705ccc0f09e
 # =====================================
 ---
 project:
   name: coral
 
   github: {owner: &self vkottler}
-  version: {major: 0, minor: 1, patch: 1}
-
+  version: {major: 0, minor: 2, patch: 0}
 variants:
+  clang:
+    suffix: &clang_version "-15"
+
   debug:
     suffix: "-12"
   opt:
     suffix: "-12"
 
-  clang:
-    suffix: &clang_version "-15"
-
   clang-opt:
     suffix: *clang_version
+
+includes:
+  - local/yambs.yaml

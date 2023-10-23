@@ -1,6 +1,5 @@
 /**
- * \file CircularBuffer.h
- *
+ * \file
  * \brief A simple circular-buffer implementation.
  */
 #pragma once
