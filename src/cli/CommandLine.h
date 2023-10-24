@@ -7,6 +7,7 @@
 /* toolchain */
 #include <cassert>
 #include <cstdint>
+#include <cstdlib>
 #include <string>
 
 /* internal */
@@ -34,15 +35,62 @@ class ElementCommandLine
     }
 
     template <std::size_t index>
+    bool as_int(long &output, LogInterface<T> *_log = nullptr)
+    {
+        bool result = false;
+        auto elem = at<index>(_log);
+
+        if (elem)
+        {
+            char *endptr;
+            output = std::strtol(elem, &endptr, 0);
+
+            /* Conversion succeeded if we reached the end of the string. */
+            result = *endptr == '\0';
+
+            _log = normalize_log(_log);
+            if (not result and _log)
+            {
+                _log->log("Couldn't convert '%s' to an integer (error at "
+                          "'%s').\n",
+                          elem, endptr);
+            }
+        }
+
+        return result;
+    }
+
+    template <std::size_t index>
+    bool as_double(double &output, LogInterface<T> *_log = nullptr)
+    {
+        bool result = false;
+        auto elem = at<index>(_log);
+
+        if (elem)
+        {
+            char *endptr;
+            output = std::strtod(elem, &endptr);
+
+            /* Conversion succeeded if we reached the end of the string. */
+            result = *endptr == '\0';
+
+            _log = normalize_log(_log);
+            if (not result and _log)
+            {
+                _log->log("Couldn't convert '%s' to a double (error at "
+                          "'%s').\n",
+                          elem, endptr);
+            }
+        }
+
+        return result;
+    }
+
+    template <std::size_t index>
     bool as_bool(bool &output, LogInterface<T> *_log = nullptr)
     {
         bool result = false;
-        auto elem = at<index>();
-
-        if (not _log)
-        {
-            _log = log;
-        }
+        auto elem = at<index>(_log);
 
         if (elem)
         {
@@ -57,11 +105,15 @@ class ElementCommandLine
                 output = false;
                 result = true;
             }
-            else if (log)
+            else
             {
-                _log->log(
-                    "Got '%s' and not literal value 'true' or 'false'.\n",
-                    elem);
+                _log = normalize_log(_log);
+                if (_log)
+                {
+                    _log->log(
+                        "Got '%s' and not literal value 'true' or 'false'.\n",
+                        elem);
+                }
             }
         }
 
@@ -73,25 +125,24 @@ class ElementCommandLine
     {
         const element_t *result = nullptr;
 
-        if (not _log)
-        {
-            _log = log;
-        }
-
         if (length > index)
         {
             result = line[index];
         }
-        else if (log)
+        else
         {
-            _log->log("No element at index %zu (%zu arguments total).\n",
-                      index, length);
+            _log = normalize_log(_log);
+            if (_log)
+            {
+                _log->log("No element at index %zu (%zu arguments total).\n",
+                          index, length);
+            }
         }
 
         return result;
     }
 
-    const String get_command()
+    inline const String get_command()
     {
         return String(command);
     }
@@ -102,6 +153,16 @@ class ElementCommandLine
     std::size_t length;
 
     LogInterface<T> *log;
+
+    LogInterface<T> *normalize_log(LogInterface<T> *_log = nullptr)
+    {
+        if (not _log)
+        {
+            _log = log;
+        }
+
+        return _log;
+    }
 };
 
 using CommandLine = ElementCommandLine<>;
