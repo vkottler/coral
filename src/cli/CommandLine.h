@@ -5,6 +5,7 @@
 #pragma once
 
 /* toolchain */
+#include <cassert>
 #include <cstdint>
 #include <string>
 
@@ -14,21 +15,34 @@
 namespace Coral
 {
 
-template <typename element_t = char> class ElementCommandLine
+template <typename element_t = char, class T = PrintfLogger>
+class ElementCommandLine
 {
   public:
     using String = std::basic_string<element_t>;
 
-    ElementCommandLine(const element_t **_line, std::size_t _length)
-        : line(_line), length(_length)
+    ElementCommandLine(const element_t **_line, std::size_t _length,
+                       LogInterface<T> *_log = nullptr)
+        : line(_line), command(_line[0]), length(_length), log(_log)
     {
+        /* At minimum a command must be provided. */
+        assert(length);
+
+        /* All arguments follow the command. */
+        line = &line[1];
+        length--;
     }
 
-    template <std::size_t index, class T = PrintfLogger>
-    bool as_bool(bool &output, LogInterface<T> *log = nullptr)
+    template <std::size_t index>
+    bool as_bool(bool &output, LogInterface<T> *_log = nullptr)
     {
         bool result = false;
         auto elem = at<index>();
+
+        if (not _log)
+        {
+            _log = log;
+        }
 
         if (elem)
         {
@@ -45,18 +59,24 @@ template <typename element_t = char> class ElementCommandLine
             }
             else if (log)
             {
-                log->log("Got '%s' and not literal value 'true' or 'false'.\n",
-                         elem);
+                _log->log(
+                    "Got '%s' and not literal value 'true' or 'false'.\n",
+                    elem);
             }
         }
 
         return result;
     }
 
-    template <std::size_t index, class T = PrintfLogger>
-    const element_t *at(LogInterface<T> *log = nullptr)
+    template <std::size_t index>
+    const element_t *at(LogInterface<T> *_log = nullptr)
     {
         const element_t *result = nullptr;
+
+        if (not _log)
+        {
+            _log = log;
+        }
 
         if (length > index)
         {
@@ -64,16 +84,24 @@ template <typename element_t = char> class ElementCommandLine
         }
         else if (log)
         {
-            log->log("No element at %zu (%zu arguments found).", index,
-                     length);
+            _log->log("No element at index %zu (%zu arguments total).\n",
+                      index, length);
         }
 
         return result;
     }
 
+    const String get_command()
+    {
+        return String(command);
+    }
+
   protected:
     const element_t **line;
+    const element_t *command;
     std::size_t length;
+
+    LogInterface<T> *log;
 };
 
 using CommandLine = ElementCommandLine<>;
