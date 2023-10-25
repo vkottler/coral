@@ -5,11 +5,12 @@
 #include <sstream>
 
 /* internal */
-#include "../../cli/CommandLine.h"
-#include "../../cli/StringCommandProcessor.h"
+#include "../../cli/CommandLineApp.h"
 
 using namespace Coral;
 
 static constexpr std::size_t depth = 1024;
 using Buffer = CharBuffer<depth>;
 using Processor = StringCommandProcessor<depth>;
+
+PrintfLogger logger;

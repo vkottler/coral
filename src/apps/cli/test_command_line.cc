@@ -2,7 +2,6 @@
 #include "common.h"
 
 bool value;
-PrintfLogger logger;
 
 void test_first_arg_bool(const char **argc, std::size_t argv)
 {
@@ -44,10 +43,10 @@ void test_first_arg_int_second_not_int(const char **argc, std::size_t argv)
     CommandLine cli(argc, argv, &logger);
 
     long int_value;
-    assert(cli.as_int<0>(int_value));
+    assert(cli.as_long<0>(int_value));
     assert(int_value == 123);
 
-    assert(not cli.as_int<1>(int_value));
+    assert(not cli.as_long<1>(int_value));
 
     value = true;
 }

@@ -17,14 +17,15 @@ namespace Coral
 {
 
 template <typename element_t = char, class T = PrintfLogger>
-class ElementCommandLine
+class ElementCommandLine : public HasLogInterface<T>
 {
   public:
     using String = std::basic_string<element_t>;
 
     ElementCommandLine(const element_t **_line, std::size_t _length,
                        LogInterface<T> *_log = nullptr)
-        : line(_line), command(_line[0]), length(_length), log(_log)
+        : HasLogInterface<T>(_log), line(_line), command(_line[0]),
+          length(_length)
     {
         /* At minimum a command must be provided. */
         assert(length);
@@ -35,7 +36,7 @@ class ElementCommandLine
     }
 
     template <std::size_t index>
-    bool as_int(long &output, LogInterface<T> *_log = nullptr)
+    bool as_long(long &output, LogInterface<T> *_log = nullptr)
     {
         bool result = false;
         auto elem = at<index>(_log);
@@ -48,10 +49,10 @@ class ElementCommandLine
             /* Conversion succeeded if we reached the end of the string. */
             result = *endptr == '\0';
 
-            _log = normalize_log(_log);
-            if (not result and _log)
+            if (not result)
             {
-                _log->log("Couldn't convert '%s' to an integer (error at "
+                this->log(_log,
+                          "Couldn't convert '%s' to an integer (error at "
                           "'%s').\n",
                           elem, endptr);
             }
@@ -74,10 +75,10 @@ class ElementCommandLine
             /* Conversion succeeded if we reached the end of the string. */
             result = *endptr == '\0';
 
-            _log = normalize_log(_log);
-            if (not result and _log)
+            if (not result)
             {
-                _log->log("Couldn't convert '%s' to a double (error at "
+                this->log(_log,
+                          "Couldn't convert '%s' to a double (error at "
                           "'%s').\n",
                           elem, endptr);
             }
@@ -107,13 +108,10 @@ class ElementCommandLine
             }
             else
             {
-                _log = normalize_log(_log);
-                if (_log)
-                {
-                    _log->log(
-                        "Got '%s' and not literal value 'true' or 'false'.\n",
-                        elem);
-                }
+                this->log(
+                    _log,
+                    "Got '%s' and not literal value 'true' or 'false'.\n",
+                    elem);
             }
         }
 
@@ -131,12 +129,8 @@ class ElementCommandLine
         }
         else
         {
-            _log = normalize_log(_log);
-            if (_log)
-            {
-                _log->log("No element at index %zu (%zu arguments total).\n",
-                          index, length);
-            }
+            this->log(_log, "No element at index %zu (%zu arguments total).\n",
+                      index, length);
         }
 
         return result;
@@ -151,18 +145,6 @@ class ElementCommandLine
     const element_t **line;
     const element_t *command;
     std::size_t length;
-
-    LogInterface<T> *log;
-
-    LogInterface<T> *normalize_log(LogInterface<T> *_log = nullptr)
-    {
-        if (not _log)
-        {
-            _log = log;
-        }
-
-        return _log;
-    }
 };
 
 using CommandLine = ElementCommandLine<>;
