@@ -223,25 +223,21 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
     inline void service_data(bool required = false)
     {
+        assert(data_available or not required);
+
         if (data_available)
         {
             data_available(this);
-        }
-        else
-        {
-            assert(not required);
         }
     }
 
     inline void service_space(bool required = false)
     {
+        assert(space_available or not required);
+
         if (space_available)
         {
             space_available(this);
-        }
-        else
-        {
-            assert(not required);
         }
     }
 };

@@ -139,7 +139,7 @@ class StringCommandProcessor
         }
 
         /* Handle the command. */
-        if (handler)
+        if (handler and num_args)
         {
             handler(args, num_args);
         }
