@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.4
-# hash=cd30ca828c268bf5b3847d3052de73df
+# hash=551e672939793b0a418cc5475b169746
 # =====================================
 ---
 project:
@@ -11,12 +11,12 @@ project:
   version: {major: 0, minor: 2, patch: 3}
 variants:
   clang:
-    suffix: &clang_version "-15"
+    suffix: &clang_version "-17"
 
   debug:
-    suffix: "-12"
+    suffix: &gcc_version "-13"
   opt:
-    suffix: "-12"
+    suffix: *gcc_version
 
   clang-opt:
     suffix: *clang_version
