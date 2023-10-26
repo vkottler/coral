@@ -40,7 +40,20 @@ jobs:
 
       - run: mk yaml python-lint python-sa
 
-      - run: sudo apt-get install lcov doxygen clang-15 clang-format-15
+      - name: setup clang 17
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh 17
+          rm llvm.sh
+
+      - run: sudo apt-get install gcc-13 g++-13 lcov doxygen clang-17 clang-format-17
+      # List versions.
+      - run: gcc-13 --version
+      - run: g++-13 --version
+      - run: clang-17 --version
+      - run: clang++-17 --version
+
       - run: mk t variant=clang coverage=false
       - run: ninja all format-check
       - run: mk dist docs
@@ -55,7 +68,7 @@ jobs:
           gcov: true
           gcov_include: build/debug
           gcov_ignore: .mypy_cache
-          gcov_executable: gcov-12
+          gcov_executable: gcov-13
           fail_ci_if_error: true
           verbose: true
 

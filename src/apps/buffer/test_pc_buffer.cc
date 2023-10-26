@@ -1,17 +1,10 @@
 /* toolchain */
 #include <cassert>
-#include <iostream>
 #include <limits>
-#include <sstream>
 #include <stdio.h>
 
 /* internal */
-#include "../../buffer/PcBuffer.h"
-
-static constexpr std::size_t depth = 1024;
-using element_t = char;
-
-using namespace Coral;
+#include "common.h"
 
 using Buffer = PcBuffer<depth, element_t>;
 
