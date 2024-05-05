@@ -21,4 +21,4 @@ void dump_specials(std::ostream &stream, const struct termios &data);
 
 const char *speed_str(speed_t data);
 
-}
+} // namespace Coral

@@ -31,4 +31,4 @@ void print_verb_name_condition(const std::string name, const std::string verb,
     }
 }
 
-}
+} // namespace Coral

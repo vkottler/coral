@@ -8,29 +8,57 @@
 #include <bits/stdc++.h>
 
 /* internal */
+#include "../buffer/PcBuffer.h"
 #include "../cli/CommandLineApp.h"
 
 namespace Coral
 {
 
-class App
+template <class T, std::size_t input_buffer_depth = 8192> class App
 {
   public:
-    App(CommandLine &_cli, std::streambuf *_input) : cli(_cli), input(_input)
+    App(int argc, const char **argv, std::streambuf *_input)
+        : cli(argv, argc, &logger), input(_input)
     {
     }
 
-    void dispatch(void)
+    inline int run(void)
     {
-        char c;
+        _init();
 
+        while (!done)
+        {
+            dispatch();
+        }
+
+        return result;
+    }
+
+    using InputBuffer = ByteBuffer<input_buffer_depth>;
+
+  protected:
+    CommandLine cli;
+
+    /* Need to replace this with JSON logger. */
+    PrintfLogger logger;
+
+    /* Can be set by application. */
+    bool done = false;
+    int result = 0;
+
+  private:
+    std::streambuf *input;
+    InputBuffer input_buffer;
+
+    inline void dispatch(void)
+    {
         /* Handle the end of the stream. */
         if (input->sgetc() == EOF)
         {
             done = true;
         }
 
-        c = input->sbumpc();
+        char c = input->sbumpc();
 
         /* Handle escape. */
         if (c == 0x1b)
@@ -41,41 +69,23 @@ class App
         /* Handle byte. */
         else
         {
-            handle_input(c);
+            /* Crash if we run out of buffer. */
+            assert(input_buffer.push(std::byte(c)));
+
+            /* Let the application service input. */
+            _poll(input_buffer);
         }
     }
 
-    int run(void)
+    inline void _init(void)
     {
-        int result = 0;
-
-        init();
-
-        while (!done)
-        {
-            dispatch();
-        }
-
-        return result;
+        static_cast<T *>(this)->init();
     }
 
-    /* Make this crtp. */
-    void handle_input(char c)
+    inline void _poll(InputBuffer &input)
     {
-        std::cout << "You entered character 0x" << std::setw(2)
-                  << std::setfill('0') << std::hex << int(c) << "'"
-                  << std::endl;
+        static_cast<T *>(this)->poll(input);
     }
-
-    /* Make this crtp. */
-    void init(void)
-    {
-    }
-
-  protected:
-    CommandLine &cli;
-    std::streambuf *input;
-    bool done = false;
 };
 
 } // namespace Coral

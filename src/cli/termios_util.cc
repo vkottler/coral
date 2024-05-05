@@ -256,4 +256,4 @@ const char *speed_str(speed_t data)
     }
 }
 
-}
+} // namespace Coral

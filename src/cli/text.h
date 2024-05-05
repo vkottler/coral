@@ -61,4 +61,4 @@ void populate_flag_strs(data_t data, std::vector<std::string> &flag_strs,
     }
 }
 
-}
+} // namespace Coral

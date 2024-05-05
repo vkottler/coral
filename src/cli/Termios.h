@@ -10,6 +10,9 @@
 /* toolchain */
 #include <iostream>
 
+/* internal */
+#include "CommandLine.h"
+
 namespace Coral
 {
 
@@ -37,5 +40,17 @@ class Termios
     struct termios original;
     bool valid;
 };
+
+void initialize_terminal(int fd);
+
+template <class T> int cin_main(int argc, const char **argv)
+{
+    /* Initialize terminal. */
+    initialize_terminal(fileno(stdin));
+
+    /* Run application. */
+    T app(argc, argv, std::cin.rdbuf());
+    return app.run();
+}
 
 } // namespace Coral
