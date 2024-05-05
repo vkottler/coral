@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: [3.11, 3.12]
+
     env:
       PYTHON_VERSION: ${{matrix.python-version}}
 
@@ -61,9 +62,9 @@ jobs:
 
       # Need to clean because codecov is not finding coverage otherwise.
       - run: mk c keep=debug
-      - run: mk t
+      - run: mk t variant=debug
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v3.1.5
         with:
           gcov: true
           gcov_include: build/debug
