@@ -1,1 +1,7 @@
 ---
+# doesn't work, looks like emscripten not bleeding edge enough
+variants:
+  wasm:
+    cc: emcc
+    cxx: em++
+    ld: em++
