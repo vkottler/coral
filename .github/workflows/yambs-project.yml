@@ -9,13 +9,15 @@ on:
 
 env:
   GITHUB_API_TOKEN: ${{secrets.API_TOKEN}}
+  CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]
+        python-version: [3.11, 3.12]
+
     env:
       PYTHON_VERSION: ${{matrix.python-version}}
 
@@ -47,10 +49,10 @@ jobs:
           sudo ./llvm.sh 17
           rm llvm.sh
 
-      - run: sudo apt-get install gcc-13 g++-13 lcov doxygen clang-17 clang-format-17
+      - run: sudo apt-get install gcc-12 g++-12 lcov doxygen clang-17 clang-format-17
       # List versions.
-      - run: gcc-13 --version
-      - run: g++-13 --version
+      - run: gcc-12 --version
+      - run: g++-12 --version
       - run: clang-17 --version
       - run: clang++-17 --version
 
@@ -61,16 +63,17 @@ jobs:
 
       # Need to clean because codecov is not finding coverage otherwise.
       - run: mk c keep=debug
-      - run: mk t
+      - run: mk t variant=debug
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v3.1.5
         with:
           gcov: true
           gcov_include: build/debug
           gcov_ignore: .mypy_cache
-          gcov_executable: gcov-13
+          gcov_executable: gcov-12
           fail_ci_if_error: true
           verbose: true
+          token: ${{secrets.CODECOV_TOKEN}}
 
       - run: mk release
         if: |
