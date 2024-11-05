@@ -1,8 +1,11 @@
 ---
 name: coral
+owner: vkottler
 description: Core C++ project utilities.
+
+main_branch: master
 
 version:
   major: 0
   minor: 2
-  patch: 4
+  patch: 5

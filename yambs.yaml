@@ -1,20 +1,20 @@
 # =====================================
 # generator=datazen
 # version=3.1.4
-# hash=903c6d69bf86f43b1b50af3d811c5eb7
+# hash=73dee2a700d32f5f745077f0b50ff6a6
 # =====================================
 ---
 project:
   name: coral
 
   github: {owner: &self vkottler}
-  version: {major: 0, minor: 2, patch: 4}
+  version: {major: 0, minor: 2, patch: 5}
 variants:
   clang:
-    suffix: &clang_version "-17"
+    suffix: &clang_version "-18"
 
   debug:
-    suffix: &gcc_version "-12"
+    suffix: &gcc_version "-13"
   opt:
     suffix: *gcc_version
 
