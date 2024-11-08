@@ -52,9 +52,10 @@ class ElementCommandLine : public HasLogInterface<T>
             if (not result)
             {
                 this->log(_log,
-                          "Couldn't convert '%s' to an integer (error at "
+                          "(index %zu) Couldn't convert '%s' to an integer "
+                          "(error at "
                           "'%s').\n",
-                          elem, endptr);
+                          index, elem, endptr);
             }
         }
 
@@ -77,10 +78,11 @@ class ElementCommandLine : public HasLogInterface<T>
 
             if (not result)
             {
-                this->log(_log,
-                          "Couldn't convert '%s' to a double (error at "
-                          "'%s').\n",
-                          elem, endptr);
+                this->log(
+                    _log,
+                    "(index %zu) Couldn't convert '%s' to a double (error at "
+                    "'%s').\n",
+                    index, elem, endptr);
             }
         }
 
@@ -108,10 +110,10 @@ class ElementCommandLine : public HasLogInterface<T>
             }
             else
             {
-                this->log(
-                    _log,
-                    "Got '%s' and not literal value 'true' or 'false'.\n",
-                    elem);
+                this->log(_log,
+                          "(index %zu) Got '%s' and not literal value 'true' "
+                          "or 'false'.\n",
+                          index, elem);
             }
         }
 
@@ -129,8 +131,10 @@ class ElementCommandLine : public HasLogInterface<T>
         }
         else
         {
-            this->log(_log, "No element at index %zu (%zu arguments total).\n",
-                      index, length);
+            this->log(
+                _log,
+                "(index %zu) No element at index %zu (%zu arguments total).\n",
+                index, index, length);
         }
 
         return result;
