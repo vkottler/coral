@@ -1,5 +1,5 @@
 let gcc_suffix = '-12'
-let clang_suffix = '-15'
+let clang_suffix = '-17'
 
 let g:ale_c_clangformat_executable = 'clang-format' . clang_suffix
 
