@@ -8,6 +8,7 @@
 #include <termios.h>
 
 /* toolchain */
+#include <cstdint>
 #include <iostream>
 
 namespace Coral
@@ -20,5 +21,6 @@ void dump_local_modes(std::ostream &stream, const struct termios &data);
 void dump_specials(std::ostream &stream, const struct termios &data);
 
 const char *speed_str(speed_t data);
+bool baud_to_speed(uint32_t baud, speed_t &output);
 
 } // namespace Coral
