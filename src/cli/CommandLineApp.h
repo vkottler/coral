@@ -33,12 +33,12 @@ class ElementCommandLineApp : public HasLogInterface<T>
                           typename Processor::Buffer &input,
                           LogInterface<T> *_log = nullptr)
         : HasLogInterface<T>(_log),
-          processor(
-              input,
-              [this](const element_t **argv, std::size_t argc) {
-                  process(argv, argc);
-              },
-              true /* auto_poll */),
+          processor(/* LCOV_EXCL_LINE */
+                    input,
+                    [this](const element_t **argv, std::size_t argc) {
+                        process(argv, argc);
+                    },
+                    true /* auto_poll */),
           commands(), command_index(0)
     {
         add_handler("help", [this](CommandLine &cli) { help(cli); });
