@@ -256,4 +256,110 @@ const char *speed_str(speed_t data)
     }
 }
 
+bool baud_to_speed(uint32_t baud, speed_t &output)
+{
+    bool result = true;
+
+    switch (baud)
+    {
+    case 0:
+        output = B0;
+        break;
+    case 50:
+        output = B50;
+        break;
+    case 75:
+        output = B75;
+        break;
+    case 110:
+        output = B110;
+        break;
+    case 134:
+        output = B134;
+        break;
+    case 150:
+        output = B150;
+        break;
+    case 200:
+        output = B200;
+        break;
+    case 300:
+        output = B300;
+        break;
+    case 600:
+        output = B600;
+        break;
+    case 1200:
+        output = B1200;
+        break;
+    case 1800:
+        output = B1800;
+        break;
+    case 2400:
+        output = B2400;
+        break;
+    case 4800:
+        output = B4800;
+        break;
+    case 9600:
+        output = B9600;
+        break;
+    case 19200:
+        output = B19200;
+        break;
+    case 38400:
+        output = B38400;
+        break;
+    case 57600:
+        output = B57600;
+        break;
+    case 115200:
+        output = B115200;
+        break;
+    case 230400:
+        output = B230400;
+        break;
+    case 460800:
+        output = B460800;
+        break;
+    case 500000:
+        output = B500000;
+        break;
+    case 576000:
+        output = B576000;
+        break;
+    case 921600:
+        output = B921600;
+        break;
+    case 1000000:
+        output = B1000000;
+        break;
+    case 1152000:
+        output = B1152000;
+        break;
+    case 1500000:
+        output = B1500000;
+        break;
+    case 2000000:
+        output = B2000000;
+        break;
+    case 2500000:
+        output = B2500000;
+        break;
+    case 3000000:
+        output = B3000000;
+        break;
+    case 3500000:
+        output = B3500000;
+        break;
+    case 4000000:
+        output = B4000000;
+        break;
+    default:
+        result = false;
+    }
+
+    return result;
+}
+
 } // namespace Coral
