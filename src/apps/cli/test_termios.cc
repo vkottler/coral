@@ -1,5 +1,6 @@
 /* internal */
 #include "cli/Termios.h"
+#include "cli/termios_util.h"
 #include "cli/text.h"
 
 /* linux */
@@ -48,6 +49,39 @@ static void test_termios(void)
     term->info();
 
     assert(term->make_raw());
+
+    assert(speed_str(B0));
+    assert(speed_str(B50));
+    assert(speed_str(B75));
+    assert(speed_str(B110));
+    assert(speed_str(B134));
+    assert(speed_str(B150));
+    assert(speed_str(B200));
+    assert(speed_str(B300));
+    assert(speed_str(B600));
+    assert(speed_str(B1200));
+    assert(speed_str(B1800));
+    assert(speed_str(B2400));
+    assert(speed_str(B4800));
+    assert(speed_str(B9600));
+    assert(speed_str(B19200));
+    assert(speed_str(B38400));
+    assert(speed_str(B57600));
+    assert(speed_str(B115200));
+    assert(speed_str(B230400));
+    assert(speed_str(B460800));
+    assert(speed_str(B500000));
+    assert(speed_str(B576000));
+    assert(speed_str(B921600));
+    assert(speed_str(B1000000));
+    assert(speed_str(B1152000));
+    assert(speed_str(B1500000));
+    assert(speed_str(B2000000));
+    assert(speed_str(B2500000));
+    assert(speed_str(B3000000));
+    assert(speed_str(B3500000));
+    assert(speed_str(B4000000));
+    assert(speed_str(999));
 }
 
 } // namespace Coral
