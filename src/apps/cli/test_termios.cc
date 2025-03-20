@@ -3,6 +3,7 @@
 #include "cli/text.h"
 
 /* linux */
+#include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -28,11 +29,18 @@ static void test_text(void)
 
 static void test_termios(void)
 {
+    /*
+     * Could also try stdin first.
+     *
     int term_fd = fileno(stdin);
     if (not isatty(term_fd))
     {
-        // get a pseudo terminal
     }
+    */
+
+    int term_fd = posix_openpt(O_RDWR | O_NOCTTY);
+    print_verb_name_condition("posix", "openpt", term_fd != -1, true, true);
+    assert(term_fd != -1);
 
     /* Initialize terminal. */
     Termios *term = initialize_terminal(term_fd);
