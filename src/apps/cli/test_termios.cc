@@ -2,6 +2,7 @@
 #include "cli/Termios.h"
 #include "cli/termios_util.h"
 #include "cli/text.h"
+#include "io/file_descriptors.h"
 
 /* linux */
 #include <fcntl.h>
@@ -42,6 +43,8 @@ static void test_termios(void)
     int term_fd = posix_openpt(O_RDWR | O_NOCTTY);
     print_verb_name_condition("posix", "openpt", term_fd != -1, true, true);
     assert(term_fd != -1);
+
+    assert(fd_info(term_fd));
 
     /* Initialize terminal. */
     Termios *term = initialize_terminal(term_fd);
