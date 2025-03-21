@@ -1,14 +1,14 @@
 # =====================================
 # generator=datazen
 # version=3.1.4
-# hash=6dfff1483598acd65b1abdf4f739a98d
+# hash=96c346af2746305a59173202d29ed522
 # =====================================
 ---
 project:
   name: coral
 
   github: {owner: &self vkottler}
-  version: {major: 0, minor: 3, patch: 3}
+  version: {major: 0, minor: 3, patch: 4}
 variants:
   clang:
     suffix: &clang_version "-18"

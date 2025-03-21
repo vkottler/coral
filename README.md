@@ -2,11 +2,11 @@
     =====================================
     generator=datazen
     version=3.1.4
-    hash=927a46da6971fef67050030f9e2b832b
+    hash=ab94d40005eac2ae84e0d05cd510128c
     =====================================
 -->
 
-# coral ([0.3.3](https://github.com/vkottler/coral/releases/tag/0.3.3))
+# coral ([0.3.4](https://github.com/vkottler/coral/releases/tag/0.3.4))
 
 [![codecov](https://codecov.io/gh/vkottler/coral/branch/master/graph/badge.svg)](https://codecov.io/gh/vkottler/coral)
 ![Build Status](https://github.com/vkottler/coral/actions/workflows/yambs-project.yml/badge.svg)
