@@ -7,6 +7,9 @@
 #include "termios_util.h"
 #include "text.h"
 
+/* linux */
+#include <unistd.h>
+
 namespace Coral
 {
 
@@ -183,6 +186,22 @@ void dump_specials(std::ostream &stream, const struct termios &data)
     }
 
     stream << std::endl;
+}
+
+void dump_term_all(std::ostream &stream, int fd, const struct termios &data)
+{
+    stream << "                   path: " << ttyname(fd) << std::endl;
+
+    dump_input_modes(stream, data);
+    dump_output_modes(stream, data);
+    dump_control_modes(stream, data);
+    dump_local_modes(stream, data);
+    dump_specials(stream, data);
+
+    stream << "            input  baud: " << speed_str(cfgetispeed(&data))
+           << std::endl;
+    stream << "            output baud: " << speed_str(cfgetospeed(&data))
+           << std::endl;
 }
 
 const char *speed_str(speed_t data)

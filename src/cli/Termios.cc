@@ -4,8 +4,8 @@
 #include <cstdio>
 
 /* internal */
+#include "../io/file_descriptors.h"
 #include "Termios.h"
-#include "termios_util.h"
 #include "text.h"
 
 namespace Coral
@@ -13,18 +13,7 @@ namespace Coral
 
 void Termios::info(std::ostream &stream)
 {
-    stream << "                   path: " << ttyname(fd) << std::endl;
-
-    dump_input_modes(stream, current);
-    dump_output_modes(stream, current);
-    dump_control_modes(stream, current);
-    dump_local_modes(stream, current);
-    dump_specials(stream, current);
-
-    stream << "            input  baud: " << speed_str(cfgetispeed(&current))
-           << std::endl;
-    stream << "            output baud: " << speed_str(cfgetospeed(&current))
-           << std::endl;
+    fd_info(fd, stream);
 }
 
 bool Termios::make_raw(int optional_actions)
