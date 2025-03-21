@@ -11,6 +11,10 @@ int main(void)
 {
     using namespace Coral;
 
+    assert(fd_info(fileno(stdin)));
+    assert(fd_info(fileno(stdout)));
+    assert(fd_info(fileno(stderr)));
+
     {
         FdManager fds;
         char *path = std::tmpnam(nullptr);
