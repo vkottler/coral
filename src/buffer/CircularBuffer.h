@@ -72,9 +72,14 @@ class CircularBuffer
         return state.read_cursor % depth;
     }
 
+    inline element_t peek(void)
+    {
+        return buffer[read_index()];
+    }
+
     inline void read_single(element_t &elem)
     {
-        elem = buffer[read_index()];
+        elem = peek();
         state.read_cursor++;
 
         state.read_count++;
