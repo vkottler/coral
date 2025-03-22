@@ -30,6 +30,7 @@ class Termios
 
     bool set_echo(bool state, int optional_actions = default_action);
     bool set_canonical(bool state, int optional_actions = default_action);
+    bool set_baud(long baud);
 
     const int fd;
 

@@ -49,6 +49,7 @@ static void test_termios(void)
     /* Initialize terminal. */
     Termios *term = initialize_terminal(term_fd);
     assert(term);
+    assert(term->set_baud(115200));
     term->info();
 
     assert(term->make_raw());

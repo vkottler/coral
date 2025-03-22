@@ -6,6 +6,7 @@
 /* internal */
 #include "../io/file_descriptors.h"
 #include "Termios.h"
+#include "termios_util.h"
 #include "text.h"
 
 namespace Coral
@@ -34,6 +35,23 @@ bool Termios::set_canonical(bool state, int optional_actions)
     current.c_lflag =
         (state) ? current.c_lflag | ICANON : current.c_lflag & ~(ICANON);
     return setattrs(optional_actions);
+}
+
+bool Termios::set_baud(long baud)
+{
+    speed_t speed;
+
+    /* Could be upgraded to handle setting a non-standard baud rate (requires
+     * termios2?). */
+    bool result = baud_to_speed(baud, speed);
+
+    if (result)
+    {
+        result = cfsetspeed(&current, speed) == 0;
+        assert(setattrs());
+    }
+
+    return result;
 }
 
 bool Termios::setattrs(int optional_actions)
