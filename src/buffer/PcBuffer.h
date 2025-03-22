@@ -66,6 +66,11 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         buffer.poll_metrics(tmp, tmp);
     }
 
+    inline element_t peek()
+    {
+        return buffer.peek();
+    }
+
     bool pop_impl(element_t &elem)
     {
         /* Allow a pop request to feed the buffer. */
