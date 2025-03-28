@@ -26,7 +26,7 @@ class MessageEncoder
         /* Advance to the start state if we were constructed with real data. */
         if (_data and _length)
         {
-            assert(stage((const uint8_t *)_data, _length));
+            stage((const uint8_t *)_data, _length);
         }
     }
 
