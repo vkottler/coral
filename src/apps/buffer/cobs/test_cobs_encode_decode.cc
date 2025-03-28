@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 /* toolchain */
 #include <iostream>
 #include <string>

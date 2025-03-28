@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 /* toolchain */
 #include <cassert>
 #include <limits>
