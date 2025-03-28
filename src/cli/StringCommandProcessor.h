@@ -67,7 +67,7 @@ class StringCommandProcessor
 
         while (not input.empty())
         {
-            assert(input.pop_n(&line[index], 1));
+            input.pop_n(&line[index], 1);
 
             if (line[index] != line_delim)
             {

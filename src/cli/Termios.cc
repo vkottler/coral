@@ -48,7 +48,7 @@ bool Termios::set_baud(long baud)
     if (result)
     {
         result = cfsetspeed(&current, speed) == 0;
-        assert(setattrs());
+        setattrs();
     }
 
     return result;
@@ -115,14 +115,20 @@ Termios *initialize_terminal(int fd)
         term = new Termios(fd);
 
         /* Turn input echo and canonical mode off. */
-        assert(term->set_echo(false));
-        assert(term->set_canonical(false));
+        print_verb_name_condition("echo", "disable", term->set_echo(false),
+                                  true /* show_errno */,
+                                  true /* error_only */);
+        print_verb_name_condition(
+            "canonical", "disable", term->set_canonical(false),
+            true /* show_errno */, true /* error_only */);
 
         /* What do these settings do? */
         term->current.c_cc[VTIME] = 0;
         term->current.c_cc[VMIN] = 1;
 
-        assert(term->setattrs());
+        print_verb_name_condition("attributes", "set", term->setattrs(),
+                                  true /* show_errno */,
+                                  true /* error_only */);
 
         /* Handle signals / clean up. */
         std::atexit(clean_up);

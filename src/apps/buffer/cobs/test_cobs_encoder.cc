@@ -115,7 +115,7 @@ void encoder_scenario(const uint8_t *input, std::size_t input_size,
         curr_chunk = small_buffer.pop_all(output_ptr);
 
         /* There should always be data to pop. */
-        assert(curr_chunk);
+        assert(curr_chunk); /* LCOV_EXCL_LINE */
 
         output_ptr += curr_chunk;
         output_size += curr_chunk;

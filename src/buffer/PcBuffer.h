@@ -115,7 +115,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
         if (count)
         {
-            assert(pop_n_impl(elem_array, count));
+            pop_n_impl(elem_array, count);
         }
 
         return count;
@@ -126,7 +126,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         std::size_t result = state.data_available();
         if (result)
         {
-            assert(pop_n_impl(elem_array, result));
+            pop_n_impl(elem_array, result);
         }
         return result;
     }
@@ -155,8 +155,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         {
             service_data(true);
         }
-
-        assert(push_impl(elem));
+        push_impl(elem);
     }
 
     inline void flush(void)
@@ -192,7 +191,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
         if (count)
         {
-            assert(push_n_impl(elem_array, count));
+            push_n_impl(elem_array, count);
         }
 
         return count;
@@ -210,7 +209,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
                 service_data(true);
             }
 
-            assert(push_n_impl(elem_array, chunk));
+            push_n_impl(elem_array, chunk);
             elem_array += chunk;
             count -= chunk;
         }
