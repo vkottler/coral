@@ -228,6 +228,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
     inline void service_data(bool required = false)
     {
+        (void)required;
         assert(data_available or not required);
 
         if (data_available)
@@ -238,6 +239,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
 
     inline void service_space(bool required = false)
     {
+        (void)required;
         assert(space_available or not required);
 
         if (space_available)
