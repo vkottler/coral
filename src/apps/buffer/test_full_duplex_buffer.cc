@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 /* internal */
 #include "SampleFdBuffer.h"
 

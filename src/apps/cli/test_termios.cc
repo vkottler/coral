@@ -1,3 +1,7 @@
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
 /* internal */
 #include "cli/Termios.h"
 #include "cli/termios_util.h"
