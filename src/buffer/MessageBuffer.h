@@ -21,11 +21,15 @@ class MessageBuffer : protected CircularBuffer<depth, element_t>
     {
     }
 
+    inline bool full(std::size_t check = 0)
+    {
+        return num_messages >= max_messages or (data_size + check > depth);
+    }
+
     bool put_message(const element_t *data, std::size_t len)
     {
         /* Need room for message size element and space in data buffer. */
-        bool result =
-            num_messages < max_messages and (depth - data_size >= len);
+        bool result = len and not full(len);
 
         if (result)
         {
@@ -41,7 +45,7 @@ class MessageBuffer : protected CircularBuffer<depth, element_t>
 
     bool get_message(element_t *data, std::size_t &len)
     {
-        bool result = num_messages > 0;
+        bool result = not empty();
 
         if (result)
         {
@@ -53,6 +57,11 @@ class MessageBuffer : protected CircularBuffer<depth, element_t>
         }
 
         return result;
+    }
+
+    inline bool empty()
+    {
+        return num_messages == 0;
     }
 
   protected:
