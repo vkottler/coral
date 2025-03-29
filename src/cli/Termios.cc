@@ -5,9 +5,9 @@
 
 /* internal */
 #include "../io/file_descriptors.h"
+#include "../logging/macros.h"
 #include "Termios.h"
 #include "termios_util.h"
-#include "text.h"
 
 namespace Coral
 {
@@ -48,7 +48,7 @@ bool Termios::set_baud(long baud)
     if (result)
     {
         result = cfsetspeed(&current, speed) == 0;
-        setattrs();
+        LogErrnoIfNot(setattrs());
     }
 
     return result;
@@ -59,9 +59,7 @@ bool Termios::setattrs(int optional_actions)
     if (valid)
     {
         valid = tcsetattr(fd, optional_actions, &current) == 0;
-        print_verb_name_condition("tc", "setattr", valid,
-                                  true /* show_errno */,
-                                  true /* error_only */);
+        LogErrnoIfNot(valid);
     }
 
     return valid;
@@ -76,8 +74,7 @@ Termios::Termios(int _fd, bool _auto_close)
      * Store the original termios structure before it's modified.
      */
     valid = tcgetattr(fd, &original) == 0;
-    print_verb_name_condition("tc", "getattr", valid, true /* show_errno */,
-                              true /* error_only */);
+    LogErrnoIfNot(valid);
     current = original;
 }
 
@@ -87,8 +84,7 @@ Termios::~Termios()
      * Restore the original termios structure.
      */
     valid = tcsetattr(fd, default_action, &original) == 0;
-    print_verb_name_condition("tc", "setattr", valid, true /* show_errno */,
-                              true /* error_only */);
+    LogErrnoIfNot(valid);
 
     if (auto_close)
     {
@@ -115,20 +111,14 @@ Termios *initialize_terminal(int fd)
         term = new Termios(fd);
 
         /* Turn input echo and canonical mode off. */
-        print_verb_name_condition("echo", "disable", term->set_echo(false),
-                                  true /* show_errno */,
-                                  true /* error_only */);
-        print_verb_name_condition(
-            "canonical", "disable", term->set_canonical(false),
-            true /* show_errno */, true /* error_only */);
+        LogErrnoIfNot(term->set_echo(false));
+        LogErrnoIfNot(term->set_canonical(false));
 
         /* What do these settings do? */
         term->current.c_cc[VTIME] = 0;
         term->current.c_cc[VMIN] = 1;
 
-        print_verb_name_condition("attributes", "set", term->setattrs(),
-                                  true /* show_errno */,
-                                  true /* error_only */);
+        LogErrnoIfNot(term->setattrs());
 
         /* Handle signals / clean up. */
         std::atexit(clean_up);

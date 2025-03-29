@@ -10,6 +10,7 @@
 /* internal */
 #include "../cli/termios_util.h"
 #include "../cli/text.h"
+#include "../logging/macros.h"
 #include "file_descriptors.h"
 
 namespace Coral
@@ -19,7 +20,7 @@ void close_fds(const FdMap &fds)
 {
     for (const auto &[name, fd] : fds)
     {
-        print_verb_name_condition(name, "close", close(fd) == 0);
+        LogErrnoIfNot(close(fd) == 0);
     }
 }
 
@@ -34,16 +35,17 @@ bool get_file_fd(const std::string path, FdMap &fds, const std::string mode)
 
         if (result)
         {
-            int fd = fileno(std::fopen(path.data(), mode.data()));
+            int fd = fileno(file);
             result = fd != -1;
             if (result)
             {
                 fds[path] = fd;
             }
         }
+
+        LogErrnoIfNot(result);
     }
 
-    print_verb_name_condition(path, "open", result);
     return result;
 }
 
@@ -79,11 +81,9 @@ bool fd_info(int fd, std::ostream &stream)
     /* Get status flags. */
     int flags = fcntl(fd, F_GETFL);
     bool success = flags != -1;
+    LogErrnoIfNot(success);
 
     std::string fd_string = "fd(" + std::to_string(fd) + ")";
-
-    print_verb_name_condition(fd_string, "get status flags", success,
-                              true /* show_errno */, true /* error_only */);
 
     /* Print info about flags. */
     if (success)
