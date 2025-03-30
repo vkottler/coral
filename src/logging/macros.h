@@ -5,8 +5,8 @@
 #pragma once
 
 /* internal */
+#include "../result.h"
 #include "PrintfLogger.h"
-#include "result.h"
 
 /* toolchain */
 #include <cerrno>

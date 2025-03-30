@@ -12,7 +12,7 @@
 #include <iostream>
 
 /* internal */
-#include "result.h"
+#include "../result.h"
 
 namespace Coral
 {

@@ -8,8 +8,8 @@
 #include <iostream>
 
 /* internal */
+#include "../result.h"
 #include "file_descriptors.h"
-#include "result.h"
 
 namespace Coral
 {

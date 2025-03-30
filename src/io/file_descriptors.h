@@ -10,7 +10,7 @@
 #include <string>
 
 /* internal */
-#include "result.h"
+#include "../result.h"
 
 namespace Coral
 {

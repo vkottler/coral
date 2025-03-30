@@ -12,7 +12,7 @@
 
 /* internal */
 #include "../logging/PrintfLogger.h"
-#include "result.h"
+#include "../result.h"
 
 namespace Coral
 {
