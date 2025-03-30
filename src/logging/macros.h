@@ -6,13 +6,14 @@
 
 /* internal */
 #include "PrintfLogger.h"
+#include "result.h"
 
 /* toolchain */
 #include <cerrno>
 #include <cstring>
 
 #ifndef CORAL_LOGGER
-#define CORAL_LOGGER Coral::stderr_logger()
+#define CORAL_LOGGER ::Coral::stderr_logger()
 #endif
 
 #ifndef LogIf
@@ -27,8 +28,8 @@
 #define LogErrnoIf(x)                                                         \
     if (x)                                                                    \
     {                                                                         \
-        CORAL_LOGGER.log("%s:%d LogErrnoIf(" #x ") %s\n", __FILE__, __LINE__, \
-                         strerror(errno));                                    \
+        CORAL_LOGGER.log("%s:%d LogErrnoIf(" #x ") '%s'\n", __FILE__,         \
+                         __LINE__, strerror(errno));                          \
     }
 #endif
 
@@ -38,6 +39,24 @@
     {                                                                         \
         CORAL_LOGGER.log("%s:%d LogReturnIf(" #x ")\n", __FILE__, __LINE__);  \
         return;                                                               \
+    }
+#endif
+
+#ifndef LogFailIf
+#define LogFailIf(x)                                                          \
+    if (x)                                                                    \
+    {                                                                         \
+        CORAL_LOGGER.log("%s:%d LogFailIf(" #x ")\n", __FILE__, __LINE__);    \
+        return FAIL;                                                          \
+    }
+#endif
+
+#ifndef LogSuccessIf
+#define LogSuccessIf(x)                                                       \
+    if (x)                                                                    \
+    {                                                                         \
+        CORAL_LOGGER.log("%s:%d LogSuccessIf(" #x ")\n", __FILE__, __LINE__); \
+        return SUCCESS;                                                       \
     }
 #endif
 
@@ -63,7 +82,7 @@
 #define LogErrnoIfNot(x)                                                      \
     if (not(x))                                                               \
     {                                                                         \
-        CORAL_LOGGER.log("%s:%d LogErrnoIfNot(" #x ") %s\n", __FILE__,        \
+        CORAL_LOGGER.log("%s:%d LogErrnoIfNot(" #x ") '%s'\n", __FILE__,      \
                          __LINE__, strerror(errno));                          \
     }
 #endif
@@ -75,6 +94,25 @@
         CORAL_LOGGER.log("%s:%d LogReturnIfNot(" #x ")\n", __FILE__,          \
                          __LINE__);                                           \
         return;                                                               \
+    }
+#endif
+
+#ifndef LogFailIfNot
+#define LogFailIfNot(x)                                                       \
+    if (not(x))                                                               \
+    {                                                                         \
+        CORAL_LOGGER.log("%s:%d LogFailIfNot(" #x ")\n", __FILE__, __LINE__); \
+        return FAIL;                                                          \
+    }
+#endif
+
+#ifndef LogSuccessIfNot
+#define LogSuccessIfNot(x)                                                    \
+    if (not(x))                                                               \
+    {                                                                         \
+        CORAL_LOGGER.log("%s:%d LogSuccessIfNot(" #x ")\n", __FILE__,         \
+                         __LINE__);                                           \
+        return SUCCESS;                                                       \
     }
 #endif
 
