@@ -34,7 +34,7 @@ uint8_t next_zero_distance(const uint8_t *data, std::size_t length,
     return result + 1;
 }
 
-bool MessageEncoder::stage(const uint8_t *_data, std::size_t _length)
+Result MessageEncoder::stage(const uint8_t *_data, std::size_t _length)
 {
     /*
      * Can only stage a message if the previous encoding is complete, or
@@ -49,10 +49,10 @@ bool MessageEncoder::stage(const uint8_t *_data, std::size_t _length)
         state = start;
     }
 
-    return result;
+    return ToResult(result);
 }
 
-bool MessageEncoder::stage(const char *_data, std::size_t _length)
+Result MessageEncoder::stage(const char *_data, std::size_t _length)
 {
     return stage((const uint8_t *)_data, _length);
 }

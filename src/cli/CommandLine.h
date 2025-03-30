@@ -12,6 +12,7 @@
 
 /* internal */
 #include "../logging/PrintfLogger.h"
+#include "result.h"
 
 namespace Coral
 {
@@ -36,7 +37,7 @@ class ElementCommandLine : public HasLogInterface<T>
     }
 
     template <std::size_t index>
-    bool as_long(long &output, LogInterface<T> *_log = nullptr)
+    Result as_long(long &output, LogInterface<T> *_log = nullptr)
     {
         bool result = false;
         auto elem = at<index>(_log);
@@ -59,11 +60,11 @@ class ElementCommandLine : public HasLogInterface<T>
             }
         }
 
-        return result;
+        return ToResult(result);
     }
 
     template <std::size_t index>
-    bool as_double(double &output, LogInterface<T> *_log = nullptr)
+    Result as_double(double &output, LogInterface<T> *_log = nullptr)
     {
         bool result = false;
         auto elem = at<index>(_log);
@@ -86,11 +87,11 @@ class ElementCommandLine : public HasLogInterface<T>
             }
         }
 
-        return result;
+        return ToResult(result);
     }
 
     template <std::size_t index>
-    bool as_bool(bool &output, LogInterface<T> *_log = nullptr)
+    Result as_bool(bool &output, LogInterface<T> *_log = nullptr)
     {
         bool result = false;
         auto elem = at<index>(_log);
@@ -117,7 +118,7 @@ class ElementCommandLine : public HasLogInterface<T>
             }
         }
 
-        return result;
+        return ToResult(result);
     }
 
     template <std::size_t index>

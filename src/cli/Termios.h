@@ -26,16 +26,16 @@ class Termios
 
     void info(std::ostream &stream = std::cout);
 
-    bool make_raw(int optional_actions = default_action);
+    Result make_raw(int optional_actions = default_action);
 
-    bool set_echo(bool state, int optional_actions = default_action);
-    bool set_canonical(bool state, int optional_actions = default_action);
-    bool set_baud(long baud);
+    Result set_echo(bool state, int optional_actions = default_action);
+    Result set_canonical(bool state, int optional_actions = default_action);
+    Result set_baud(long baud);
 
     const int fd;
 
     struct termios current;
-    bool setattrs(int optional_actions = default_action);
+    Result setattrs(int optional_actions = default_action);
 
   protected:
     struct termios original;

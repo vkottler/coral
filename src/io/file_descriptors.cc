@@ -24,7 +24,7 @@ void close_fds(const FdMap &fds)
     }
 }
 
-bool get_file_fd(const std::string path, FdMap &fds, const std::string mode)
+Result get_file_fd(const std::string path, FdMap &fds, const std::string mode)
 {
     bool result = not fds.contains(path);
 
@@ -46,7 +46,7 @@ bool get_file_fd(const std::string path, FdMap &fds, const std::string mode)
         LogErrnoIfNot(result);
     }
 
-    return result;
+    return ToResult(result); /* LCOV_EXCL_LINE */
 }
 
 static const std::map<std::string, int> status_flags = {
@@ -76,7 +76,7 @@ static void dump_fd_status_flags(int flags, std::ostream &stream)
                             false /* endl */);
 }
 
-bool fd_info(int fd, std::ostream &stream)
+Result fd_info(int fd, std::ostream &stream)
 {
     /* Get status flags. */
     int flags = fcntl(fd, F_GETFL);
@@ -111,10 +111,10 @@ bool fd_info(int fd, std::ostream &stream)
         }
     }
 
-    return success;
+    return ToResult(success);
 }
 
-bool fd_set_blocking_state(int fd, bool blocking)
+Result fd_set_blocking_state(int fd, bool blocking)
 {
     /* Get status flags. */
     int flags = fcntl(fd, F_GETFL);
@@ -126,7 +126,7 @@ bool fd_set_blocking_state(int fd, bool blocking)
         success = fcntl(fd, F_SETFL, flags) != -1;
     }
 
-    return success;
+    return ToResult(success);
 }
 
 } // namespace Coral

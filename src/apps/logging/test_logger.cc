@@ -8,34 +8,48 @@
 /* toolchain */
 #include <cassert>
 
-void test_return_if(void)
+static void test_return_if(void)
 {
     LogReturnIf(true);
 }
 
-int test_return_val_if(void)
+static int test_return_val_if(void)
 {
     LogReturnValIf(true, 5);
 }
 
-void test_return_if_not(void)
+static void test_return_if_not(void)
 {
     LogReturnIfNot(false);
 }
 
-int test_return_val_if_not(void)
+static int test_return_val_if_not(void)
 {
     LogReturnValIfNot(false, 5);
 }
 
-int main(void)
+static Coral::Result test_log_fail_if(void)
 {
-    using namespace Coral;
+    LogFailIf(true);
+}
 
-    stderr_logger().log("Hello, world! %d\n", 1);
-    stderr_logger().log("Hello, world! %d\n", 2);
-    stderr_logger().log("Hello, world! %d\n", 3);
+static Coral::Result test_log_fail_if_not(void)
+{
+    LogFailIfNot(false);
+}
 
+static Coral::Result test_log_success_if(void)
+{
+    LogSuccessIf(true);
+}
+
+static Coral::Result test_log_success_if_not(void)
+{
+    LogSuccessIfNot(false);
+}
+
+static void test_logging(void)
+{
     LogIf(true);
     LogIf(1);
 
@@ -50,7 +64,61 @@ int main(void)
     LogErrnoIfNot(false);
 
     test_return_if_not();
-    test_return_val_if_not();
+    assert(test_return_val_if_not() == 5);
+
+    assert((!1) == 0);
+    assert(1 == (!0));
+
+    assert(not test_log_fail_if());
+    assert(test_log_success_if());
+
+    assert(not test_log_fail_if_not());
+    assert(test_log_success_if_not());
+}
+
+static Coral::Result test_fail_if(void)
+{
+    FailIf(true);
+}
+
+static Coral::Result test_fail_if_not(void)
+{
+    FailIfNot(false);
+}
+
+static Coral::Result test_success_if(void)
+{
+    SuccessIf(true);
+}
+
+static Coral::Result test_success_if_not(void)
+{
+    SuccessIfNot(false);
+}
+
+static Coral::Result test_result(void)
+{
+    assert(SUCCESS);
+    assert(not FAIL);
+
+    assert(not test_fail_if());
+    assert(not test_fail_if_not());
+    assert(test_success_if());
+    assert(test_success_if_not());
+
+    return SUCCESS;
+}
+
+int main(void)
+{
+    using namespace Coral;
+
+    stderr_logger().log("Hello, world! %d\n", 1);
+    stderr_logger().log("Hello, world! %d\n", 2);
+    stderr_logger().log("Hello, world! %d\n", 3);
+
+    test_logging();
+    assert(test_result());
 
     CORAL_LOGGER.log("Nominal exit.\n");
     return 0;

@@ -275,9 +275,9 @@ const char *speed_str(speed_t data)
     }
 }
 
-bool baud_to_speed(uint32_t baud, speed_t &output)
+Result baud_to_speed(uint32_t baud, speed_t &output)
 {
-    bool result = true;
+    auto result = SUCCESS;
 
     switch (baud)
     {
@@ -375,7 +375,7 @@ bool baud_to_speed(uint32_t baud, speed_t &output)
         output = B4000000;
         break;
     default:
-        result = false;
+        result = FAIL;
     }
 
     return result;
