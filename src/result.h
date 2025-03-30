@@ -11,17 +11,27 @@
 /* toolchain */
 #include <utility>
 
+/* Simple fence re-allowing implicit boolean conversion (as non enum classes
+ * behave). */
+#ifndef ToBool
+#define ToBool(x) std::to_underlying(x)
+#endif
+
 inline bool operator!(::Coral::Result res)
 {
-    return not std::to_underlying(res);
+    return not ToBool(res);
 }
 
 #ifndef FAIL
-#define FAIL ::Coral::Result::Fail
+#define FAIL (::Coral::Result::Fail)
 #endif
 
 #ifndef SUCCESS
-#define SUCCESS ::Coral::Result::Success
+#define SUCCESS (::Coral::Result::Success)
+#endif
+
+#ifndef ToResult
+#define ToResult(x) ((x) ? SUCCESS : FAIL)
 #endif
 
 #ifndef FailIf

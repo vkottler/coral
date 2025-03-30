@@ -77,7 +77,7 @@ void test_drop_data(Buffer &buf)
     buf.pop_all();
 
     element_t val = 0;
-    while (buf.push(val))
+    while (ToBool(buf.push(val)))
     {
         val++;
     }

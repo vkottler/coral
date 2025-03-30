@@ -5,6 +5,7 @@
 #pragma once
 
 /* internal */
+#include "../result.h"
 #include "CircularBuffer.h"
 
 namespace Coral
@@ -26,10 +27,10 @@ class MessageBuffer : protected CircularBuffer<depth, element_t>
         return num_messages >= max_messages or (data_size + check > depth);
     }
 
-    bool put_message(const element_t *data, std::size_t len)
+    Result put_message(const element_t *data, std::size_t len)
     {
         /* Need room for message size element and space in data buffer. */
-        bool result = len and not full(len);
+        auto result = len and not full(len);
 
         if (result)
         {
@@ -40,10 +41,10 @@ class MessageBuffer : protected CircularBuffer<depth, element_t>
             data_size += len;
         }
 
-        return result;
+        return ToResult(result);
     }
 
-    bool get_message(element_t *data, std::size_t &len)
+    Result get_message(element_t *data, std::size_t &len)
     {
         bool result = not empty();
 
@@ -56,7 +57,7 @@ class MessageBuffer : protected CircularBuffer<depth, element_t>
             data_size -= len;
         }
 
-        return result;
+        return ToResult(result);
     }
 
     inline bool empty()

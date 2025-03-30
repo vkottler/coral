@@ -11,6 +11,9 @@
 #include <cstdint>
 #include <span>
 
+/* internal */
+#include "../result.h"
+
 namespace Coral
 {
 
@@ -29,7 +32,7 @@ template <class T, typename element_t = std::byte> class PcBufferReader
      * \param[out] elem The element to be written.
      * \return          Whether or not \p elem was written.
      */
-    inline bool pop(element_t &elem)
+    inline Result pop(element_t &elem)
     {
         return static_cast<T *>(this)->pop_impl(elem);
     }
@@ -43,7 +46,7 @@ template <class T, typename element_t = std::byte> class PcBufferReader
      *                        Otherwise no elements are read.
      */
     template <std::size_t N>
-    inline bool pop(std::array<element_t, N> &elem_array)
+    inline Result pop(std::array<element_t, N> &elem_array)
     {
         return pop_n(elem_array.data(), elem_array.size());
     }
@@ -55,7 +58,7 @@ template <class T, typename element_t = std::byte> class PcBufferReader
      * \return               Whether or not \p elem_array was written.
      *                       Otherwise no elements are read.
      */
-    inline bool pop(std::span<element_t> &elem_span)
+    inline Result pop(std::span<element_t> &elem_span)
     {
         return pop_n(elem_span.data(), elem_span.size());
     }
@@ -68,7 +71,7 @@ template <class T, typename element_t = std::byte> class PcBufferReader
      * \return                Whether or not all \p count elements were read.
      *                        When false, no elements were read.
      */
-    inline bool pop_n(element_t *elem_array, std::size_t count)
+    inline Result pop_n(element_t *elem_array, std::size_t count)
     {
         return static_cast<T *>(this)->pop_n_impl(elem_array, count);
     }

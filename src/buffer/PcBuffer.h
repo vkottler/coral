@@ -71,7 +71,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         return buffer.peek();
     }
 
-    bool pop_impl(element_t &elem)
+    Result pop_impl(element_t &elem)
     {
         /* Allow a pop request to feed the buffer. */
         if (auto_service)
@@ -79,18 +79,17 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
             service_space();
         }
 
-        bool result = state.decrement_data();
-
+        auto result = state.decrement_data();
         if (result)
         {
             buffer.read_single(elem);
             service_space();
         }
 
-        return result;
+        return ToResult(result);
     }
 
-    bool pop_n_impl(element_t *elem_array, std::size_t count)
+    Result pop_n_impl(element_t *elem_array, std::size_t count)
     {
         /* Allow a pop request to feed the buffer. */
         if (auto_service)
@@ -98,15 +97,14 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
             service_space();
         }
 
-        bool result = state.decrement_data(count);
-
+        auto result = state.decrement_data(count);
         if (result)
         {
             buffer.read_n(elem_array, count);
             service_space();
         }
 
-        return result;
+        return ToResult(result);
     }
 
     std::size_t try_pop_n_impl(element_t *elem_array, std::size_t count)
@@ -131,14 +129,14 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         return result;
     }
 
-    bool push_impl(const element_t elem, bool drop = false)
+    Result push_impl(const element_t elem, bool drop = false)
     {
         if (auto_service)
         {
             service_data();
         }
 
-        bool result = state.increment_data(drop);
+        auto result = state.increment_data(drop);
 
         if (result)
         {
@@ -146,7 +144,7 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
             service_data();
         }
 
-        return result;
+        return ToResult(result);
     }
 
     void push_blocking_impl(const element_t elem)
@@ -166,23 +164,22 @@ class PcBuffer : public PcBufferWriter<PcBuffer<depth, element_t>, element_t>,
         }
     }
 
-    bool push_n_impl(const element_t *elem_array, std::size_t count,
-                     bool drop = false)
+    Result push_n_impl(const element_t *elem_array, std::size_t count,
+                       bool drop = false)
     {
         if (auto_service)
         {
             service_data();
         }
 
-        bool result = state.increment_data(drop, count);
-
+        auto result = state.increment_data(drop, count);
         if (result)
         {
             buffer.write_n(elem_array, count);
             service_data();
         }
 
-        return result;
+        return ToResult(result);
     }
 
     std::size_t try_push_n_impl(const element_t *elem_array, std::size_t count)

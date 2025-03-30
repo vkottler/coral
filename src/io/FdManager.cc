@@ -14,8 +14,8 @@ FdManager::~FdManager()
     }
 }
 
-bool FdManager::add_file_fd(const std::string path, const std::string mode,
-                            const std::string group)
+Result FdManager::add_file_fd(const std::string path, const std::string mode,
+                              const std::string group)
 {
     return get_file_fd(path, fd_group(group), mode);
 }
@@ -30,7 +30,8 @@ FdMap &FdManager::fd_group(const std::string group)
     return groups[group];
 }
 
-bool FdManager::add_fd(const std::string name, int fd, const std::string group)
+Result FdManager::add_fd(const std::string name, int fd,
+                         const std::string group)
 {
     FdMap &fds = fd_group(group);
     bool result = not fds.contains(name);
@@ -40,7 +41,7 @@ bool FdManager::add_fd(const std::string name, int fd, const std::string group)
                   << std::endl;
         fds[name] = fd;
     }
-    return result;
+    return ToResult(result);
 }
 
 int &FdManager::operator[](const std::string name)

@@ -11,6 +11,9 @@
 #include <cstdint>
 #include <span>
 
+/* internal */
+#include "../result.h"
+
 namespace Coral
 {
 
@@ -31,7 +34,7 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *                 can't be added.
      * \return         Whether or not the element was added to the buffer.
      */
-    inline bool push(const element_t &elem, bool drop = false)
+    inline Result push(const element_t &elem, bool drop = false)
     {
         return static_cast<T *>(this)->push_impl(elem, drop);
     }
@@ -57,8 +60,8 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *                       elements are pushed otherwise.
      */
     template <std::size_t N>
-    inline bool push(const std::array<element_t, N> &elem_array,
-                     bool drop = false)
+    inline Result push(const std::array<element_t, N> &elem_array,
+                       bool drop = false)
     {
         return push_n(elem_array.data(), elem_array.size(), drop);
     }
@@ -72,7 +75,8 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      * \return              Whether or not the entire span was pushed. No
      *                      elements are pushed otherwise.
      */
-    inline bool push(const std::span<element_t> &elem_span, bool drop = false)
+    inline Result push(const std::span<element_t> &elem_span,
+                       bool drop = false)
     {
         return push_n(elem_span.data(), elem_span.size(), drop);
     }
@@ -89,8 +93,8 @@ template <class T, typename element_t = std::byte> class PcBufferWriter
      *                       method only adds either \p count elements or none
      *                       of them.
      */
-    inline bool push_n(const element_t *elem_array, std::size_t count,
-                       bool drop = false)
+    inline Result push_n(const element_t *elem_array, std::size_t count,
+                         bool drop = false)
     {
         return static_cast<T *>(this)->push_n_impl(elem_array, count, drop);
     }

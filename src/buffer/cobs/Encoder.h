@@ -31,8 +31,8 @@ class MessageEncoder
     }
 
     /* Attempt to stage a message for encoding. */
-    bool stage(const uint8_t *_data, std::size_t _length);
-    bool stage(const char *_data, std::size_t _length);
+    Result stage(const uint8_t *_data, std::size_t _length);
+    Result stage(const char *_data, std::size_t _length);
 
     /*
      * Make as much encoding progress as possible. Returns true when the staged
@@ -65,7 +65,7 @@ class MessageEncoder
                     zero_pointer = next_zero_distance(data, length);
                 }
 
-                if ((can_continue = writer.push(zero_pointer)))
+                if ((can_continue = ToBool(writer.push(zero_pointer))))
                 {
                     /* Ensure the last-pointer kind is set correctly. */
                     last_pointer_kind = (zero_pointer == zero_pointer_max)
@@ -88,7 +88,7 @@ class MessageEncoder
                 break;
 
             case encode_delimeter:
-                if ((can_continue = writer.push(0)))
+                if ((can_continue = ToBool(writer.push(0))))
                 {
                     state = complete;
                 }
@@ -185,7 +185,7 @@ class MessageEncoder
              */
             assert(last_pointer_kind != pointer_to_end);
 
-            if ((handled = writer.push(zero_pointer)))
+            if ((handled = ToBool(writer.push(zero_pointer))))
             {
                 /* If this isn't an overhead pointer, we should be on a zero.
                  */
@@ -236,7 +236,7 @@ class MessageEncoder
         }
 
         /* Write data until the next zero. */
-        else if ((can_continue = writer.push_n(data, zero_pointer)))
+        else if ((can_continue = ToBool(writer.push_n(data, zero_pointer))))
         {
             advance_message(false, zero_pointer);
 

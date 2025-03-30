@@ -43,7 +43,7 @@ template <std::size_t message_mtu> class MessageDecoder
          * There's only as much work to do as there is data ready to be read
          * from the buffer.
          */
-        while ((can_continue = reader.pop(current)))
+        while ((can_continue = ToBool(reader.pop(current))))
         {
             /*
              * If we expect zero and land on one. The current message is fully

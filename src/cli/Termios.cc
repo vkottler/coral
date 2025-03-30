@@ -17,33 +17,33 @@ void Termios::info(std::ostream &stream)
     fd_info(fd, stream);
 }
 
-bool Termios::make_raw(int optional_actions)
+Result Termios::make_raw(int optional_actions)
 {
     cfmakeraw(&current);
     return setattrs(optional_actions);
 }
 
-bool Termios::set_echo(bool state, int optional_actions)
+Result Termios::set_echo(bool state, int optional_actions)
 {
     current.c_lflag =
         (state) ? current.c_lflag | ECHO : current.c_lflag & ~(ECHO);
     return setattrs(optional_actions);
 }
 
-bool Termios::set_canonical(bool state, int optional_actions)
+Result Termios::set_canonical(bool state, int optional_actions)
 {
     current.c_lflag =
         (state) ? current.c_lflag | ICANON : current.c_lflag & ~(ICANON);
     return setattrs(optional_actions);
 }
 
-bool Termios::set_baud(long baud)
+Result Termios::set_baud(long baud)
 {
     speed_t speed;
 
     /* Could be upgraded to handle setting a non-standard baud rate (requires
      * termios2?). */
-    bool result = baud_to_speed(baud, speed);
+    auto result = ToBool(baud_to_speed(baud, speed));
 
     if (result)
     {
@@ -51,10 +51,10 @@ bool Termios::set_baud(long baud)
         LogErrnoIfNot(setattrs());
     }
 
-    return result;
+    return ToResult(result);
 }
 
-bool Termios::setattrs(int optional_actions)
+Result Termios::setattrs(int optional_actions)
 {
     if (valid)
     {
@@ -62,7 +62,7 @@ bool Termios::setattrs(int optional_actions)
         LogErrnoIfNot(valid);
     }
 
-    return valid;
+    return ToResult(valid);
 }
 
 Termios::Termios(int _fd, bool _auto_close)
