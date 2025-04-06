@@ -24,12 +24,28 @@
     }
 #endif
 
+#ifndef LogErrno
+#define LogErrno                                                              \
+    CORAL_LOGGER.log("%s:%d LogErrno '%s'\n", __FILE__, __LINE__,             \
+                     strerror(errno));
+#endif
+
 #ifndef LogErrnoIf
 #define LogErrnoIf(x)                                                         \
     if (x)                                                                    \
     {                                                                         \
         CORAL_LOGGER.log("%s:%d LogErrnoIf(" #x ") '%s'\n", __FILE__,         \
                          __LINE__, strerror(errno));                          \
+    }
+#endif
+
+#ifndef LogErrnoReturnIf
+#define LogErrnoReturnIf(x)                                                   \
+    if (x)                                                                    \
+    {                                                                         \
+        CORAL_LOGGER.log("%s:%d LogErrnoReturnIf(" #x ") '%s'\n", __FILE__,   \
+                         __LINE__, strerror(errno));                          \
+        return;                                                               \
     }
 #endif
 
@@ -84,6 +100,16 @@
     {                                                                         \
         CORAL_LOGGER.log("%s:%d LogErrnoIfNot(" #x ") '%s'\n", __FILE__,      \
                          __LINE__, strerror(errno));                          \
+    }
+#endif
+
+#ifndef LogErrnoReturnIfNot
+#define LogErrnoReturnIfNot(x)                                                \
+    if (not(x))                                                               \
+    {                                                                         \
+        CORAL_LOGGER.log("%s:%d LogErrnoReturnIfNot(" #x ") '%s'\n",          \
+                         __FILE__, __LINE__, strerror(errno));                \
+        return;                                                               \
     }
 #endif
 
